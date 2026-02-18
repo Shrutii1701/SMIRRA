@@ -1,0 +1,15 @@
+{
+  "name": "ai-interview-practice-arena",
+  "version": "1.0.0",
+  "description": "Gamified AI-powered interview preparation platform",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "server": "npm run dev --workspace=server",
+    "client": "npm run dev --workspace=client",
+    "dev": "npm run server"
+  }
+}

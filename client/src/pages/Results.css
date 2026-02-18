@@ -1,0 +1,275 @@
+.results-page {
+    flex: 1;
+    padding: var(--space-2xl) 0 var(--space-3xl);
+}
+
+.results-container {
+    max-width: 840px;
+    margin: 0 auto;
+}
+
+.results-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.results-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: var(--space-sm);
+}
+
+.results-header p {
+    color: var(--text-secondary);
+}
+
+/* Score summary card */
+.score-summary {
+    padding: var(--space-2xl);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+    animation: scaleIn 0.5s ease-out;
+}
+
+.final-score {
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: var(--space-sm);
+}
+
+.rank-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: var(--space-lg);
+}
+
+.rank-emoji {
+    font-size: 2rem;
+}
+
+/* Stats grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.stat-item {
+    text-align: center;
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-md);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    margin-bottom: var(--space-xs);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+/* Progress bar for rank */
+.rank-progress-section {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.rank-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: var(--space-sm);
+    color: var(--text-secondary);
+}
+
+.rank-progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.rank-progress-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    border-radius: var(--radius-full);
+    transition: width 1s ease-out;
+}
+
+/* Question results */
+.question-results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.question-result-card {
+    padding: var(--space-xl);
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.qr-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.qr-question {
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5;
+    flex: 1;
+    margin-right: var(--space-md);
+}
+
+.qr-score {
+    font-family: var(--font-mono);
+    font-weight: 800;
+    font-size: 1.3rem;
+    white-space: nowrap;
+}
+
+.qr-score.good {
+    color: var(--success);
+}
+
+.qr-score.okay {
+    color: var(--warning);
+}
+
+.qr-score.bad {
+    color: var(--danger);
+}
+
+/* Rubric bars */
+.rubric-bars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.rubric-item {
+    text-align: center;
+}
+
+.rubric-name {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-xs);
+    font-weight: 600;
+}
+
+.rubric-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: 2px;
+}
+
+.rubric-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.8s ease-out;
+}
+
+.rubric-bar-fill.high {
+    background: var(--success);
+}
+
+.rubric-bar-fill.medium {
+    background: var(--warning);
+}
+
+.rubric-bar-fill.low {
+    background: var(--danger);
+}
+
+.rubric-value {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* Feedback */
+.qr-feedback {
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.qr-feedback p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.feedback-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: var(--space-sm);
+}
+
+.feedback-tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
+.feedback-tag.strength {
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--success);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.feedback-tag.improvement {
+    background: rgba(245, 158, 11, 0.12);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.feedback-tag.missed {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Actions */
+.results-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rubric-bars {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
