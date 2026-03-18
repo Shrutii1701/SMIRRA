@@ -20,4 +20,10 @@ router.post('/generate', interviewController.generateQuestions);
 // POST /api/interview/evaluate → Evaluate a candidate's answer
 router.post('/evaluate', interviewController.evaluateAnswer);
 
+// GET  /api/interview/history  → Get past interview sessions
+router.get('/history', interviewController.getHistory);
+
+// GET  /api/interview/:id      → Get details of a specific interview
+router.get('/:id', interviewController.getInterviewById);
+
 module.exports = router;

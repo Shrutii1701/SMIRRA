@@ -14,13 +14,19 @@
 // ──────────────────────────────────────────────────────────────────────
 
 // 1. Load environment variables BEFORE anything else
-require('dotenv').config({ path: '../.env' });
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+
+const connectDB = require('./config/db');
+
+// Connect to Database
+connectDB();
 
 const interviewRoutes = require('./routes/interviewRoutes');
 const errorHandler = require('./middleware/errorHandler');

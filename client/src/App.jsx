@@ -19,6 +19,7 @@ import Landing from './pages/Landing';
 import TopicSelection from './pages/TopicSelection';
 import Arena from './pages/Arena';
 import Results from './pages/Results';
+import Sparkles from './components/Sparkles';
 
 const INITIAL_GAME_STATE = {
   cumulativeScore: 0,
@@ -60,6 +61,7 @@ export default function App() {
 
   return (
     <>
+      <Sparkles />
       <Navbar gameState={gameState} />
       <Routes>
         <Route path="/" element={<Landing />} />

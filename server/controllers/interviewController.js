@@ -15,6 +15,8 @@
 
 const geminiService = require('../services/geminiService');
 const scoringEngine = require('../utils/scoringEngine');
+const Interview = require('../models/Interview');
+const Evaluation = require('../models/Evaluation');
 const { TOPICS, DIFFICULTIES } = require('../config/constants');
 
 // ══════════════════════════════════════════════════════════════════════
@@ -82,15 +84,27 @@ const generateQuestions = async (req, res, next) => {
             questionCount
         );
 
+        // ─── Save to Database ─────────────────────────────
+        const interview = new Interview({
+            topic: {
+                id: validTopic.id,
+                name: validTopic.name,
+            },
+            difficulty: difficulty.toLowerCase(),
+            questions,
+        });
+        await interview.save();
+
         res.json({
             success: true,
             data: {
+                interviewId: interview._id,
                 questions,
                 meta: {
                     topic: validTopic,
                     difficulty: difficulty.toLowerCase(),
                     count: questions.length,
-                    generatedAt: new Date().toISOString(),
+                    generatedAt: interview.createdAt,
                 },
             },
         });
@@ -128,6 +142,8 @@ const evaluateAnswer = async (req, res, next) => {
             timeSpent = 60,
             combo = 0,
             cumulativeScore = 0,
+            interviewId = null,
+            isLastQuestion = false,
         } = req.body;
 
         // ─── Input Validation ─────────────────────────────
@@ -160,10 +176,35 @@ const evaluateAnswer = async (req, res, next) => {
             cumulativeScore
         );
 
+        // ─── Save to Database ─────────────────────────────
+        let savedEvaluation = null;
+        if (interviewId) {
+            const evaluation = new Evaluation({
+                interviewId,
+                questionId: 0, // In a real app, you'd pass the actual question ID or index
+                answer,
+                aiAnalysis,
+                scoring,
+                timeSpent,
+            });
+            savedEvaluation = await evaluation.save();
+
+            // If it's the last question, mark the interview as completed
+            if (isLastQuestion) {
+                await Interview.findByIdAndUpdate(interviewId, {
+                    status: 'completed',
+                    totalScore: scoring.gamification.cumulativeScore,
+                    finalRank: scoring.gamification.rank.current,
+                    completedAt: new Date(),
+                });
+            }
+        }
+
         // ─── Combined Response ────────────────────────────
         res.json({
             success: true,
             data: {
+                evaluationId: savedEvaluation ? savedEvaluation._id : null,
                 // Layer 1: What the AI thinks
                 aiAnalysis: {
                     scores: aiAnalysis.scores,
@@ -178,6 +219,7 @@ const evaluateAnswer = async (req, res, next) => {
                 // Metadata
                 meta: {
                     evaluatedAt: new Date().toISOString(),
+                    interviewId,
                 },
             },
         });
@@ -190,4 +232,30 @@ module.exports = {
     getTopics,
     generateQuestions,
     evaluateAnswer,
+    // New methods
+    getHistory: async (req, res, next) => {
+        try {
+            const history = await Interview.find({ status: 'completed' })
+                .sort({ createdAt: -1 })
+                .limit(20);
+            res.json({ success: true, data: history });
+        } catch (error) {
+            next(error);
+        }
+    },
+    getInterviewById: async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            const interview = await Interview.findById(id);
+            if (!interview) {
+                const error = new Error('Interview not found');
+                error.statusCode = 404;
+                throw error;
+            }
+            const evaluations = await Evaluation.find({ interviewId: id });
+            res.json({ success: true, data: { interview, evaluations } });
+        } catch (error) {
+            next(error);
+        }
+    },
 };

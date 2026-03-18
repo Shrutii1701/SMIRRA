@@ -45,9 +45,30 @@ export async function evaluateAnswer({
     timeSpent,
     combo,
     cumulativeScore,
+    interviewId,
+    isLastQuestion,
 }) {
     return request('/evaluate', {
         method: 'POST',
-        body: { question, answer, expectedConcepts, timeSpent, combo, cumulativeScore },
+        body: {
+            question,
+            answer,
+            expectedConcepts,
+            timeSpent,
+            combo,
+            cumulativeScore,
+            interviewId,
+            isLastQuestion,
+        },
     });
+}
+
+/** GET /api/interview/history */
+export async function fetchHistory() {
+    return request('/history');
+}
+
+/** GET /api/interview/:id */
+export async function fetchInterviewDetails(id) {
+    return request(`/${id}`);
 }

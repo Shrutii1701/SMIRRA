@@ -67,6 +67,8 @@ export default function Arena({ interview, gameState, onEvaluationComplete }) {
                 timeSpent: seconds,
                 combo: gameState.combo,
                 cumulativeScore: gameState.cumulativeScore,
+                interviewId: interview.interviewId, // From backend generate call
+                isLastQuestion,
             });
 
             // Pass the result up to App for state updates

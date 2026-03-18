@@ -1,7 +1,23 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import './Navbar.css';
 
 export default function Navbar({ gameState }) {
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+
+    useEffect(() => {
+        if (theme === 'light') {
+            document.documentElement.classList.add('light-theme');
+        } else {
+            document.documentElement.classList.remove('light-theme');
+        }
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+    };
+
     return (
         <nav className="navbar">
             <div className="container">
@@ -25,6 +41,15 @@ export default function Navbar({ gameState }) {
                         )}
                     </div>
                 )}
+
+                <button 
+                    className="theme-toggle" 
+                    onClick={toggleTheme} 
+                    aria-label="Toggle theme"
+                    title="Toggle Theme"
+                >
+                    {theme === 'dark' ? '☀️' : '🌙'}
+                </button>
             </div>
         </nav>
     );
