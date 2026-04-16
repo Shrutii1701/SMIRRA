@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   DESIGN SYSTEM — Interview Arena
+   DESIGN SYSTEM — SMIRRA
    
    A dark, modern, premium design with purple/cyan accent colors,
    glassmorphism cards, smooth animations, and rich micro-interactions.
@@ -7,12 +7,12 @@
 
 /* ─── CSS Variables (Design Tokens) ──────────────────────────────── */
 :root {
-  /* Background layers — dark gradient base */
-  --bg-primary: #0a0a1a;
-  --bg-secondary: #111128;
-  --bg-card: rgba(255, 255, 255, 0.04);
-  --bg-card-hover: rgba(255, 255, 255, 0.08);
-  --bg-glass: rgba(17, 17, 40, 0.85);
+  /* Background layers — rich tinted dark */
+  --bg-primary: #0d0b1a;
+  --bg-secondary: #16132b;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --bg-glass: rgba(13, 11, 26, 0.7);
 
   /* Accent colors — purple to cyan gradient spectrum */
   --accent-primary: #7c3aed;
@@ -68,11 +68,11 @@
 }
 
 :root.light-theme {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-card: rgba(255, 255, 255, 0.8);
-  --bg-card-hover: rgba(255, 255, 255, 1);
-  --bg-glass: rgba(255, 255, 255, 0.9);
+  --bg-primary: #fdfcff;
+  --bg-secondary: #f4f0fa;
+  --bg-card: rgba(255, 255, 255, 0.6);
+  --bg-card-hover: rgba(255, 255, 255, 0.9);
+  --bg-glass: rgba(253, 252, 255, 0.7);
 
   --text-primary: #0f172a;
   --text-secondary: #334155;
@@ -119,9 +119,21 @@ body::before {
   position: fixed;
   inset: 0;
   background: 
-    radial-gradient(ellipse at 20% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(124, 58, 237, 0.03) 0%, transparent 70%);
+    radial-gradient(ellipse at 15% 15%, rgba(124, 58, 237, 0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 85%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(245, 158, 11, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+:root.light-theme body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 15% 15%, rgba(124, 58, 237, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 85%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
 }

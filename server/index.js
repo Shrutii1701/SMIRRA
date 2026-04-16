@@ -97,7 +97,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`
   ╔════════════════════════════════════════════════╗
-  ║   🎯 Interview Arena API Server               ║
+  ║   🎯 SMIRRA API Server                        ║
   ║   Running on: http://localhost:${PORT}           ║
   ║   Environment: ${process.env.NODE_ENV || 'development'}              ║
   ╚════════════════════════════════════════════════╝
@@ -105,3 +105,5 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+// Force restart watcher
+// Force DB connection with smirra11

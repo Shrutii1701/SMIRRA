@@ -9,11 +9,13 @@ export default function Landing() {
             <div className="landing-content">
                 <div className="landing-badge">⚡ AI-Powered Practice</div>
 
-                <h1>
-                    Master Your Next
-                    <br />
-                    <span className="gradient-text">Technical Interview</span>
+                <h1 className="landing-title gradient-text">
+                    SMIRRA
                 </h1>
+
+                <h2 className="landing-subtitle-main">
+                    Master Your Next Technical Interview
+                </h2>
 
                 <p className="landing-subtitle">
                     Practice with AI-generated questions, get instant rubric-based

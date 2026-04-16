@@ -1,29 +1,46 @@
 .navbar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
     padding: var(--space-md) 0;
-    background: var(--bg-glass);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border-subtle);
+    z-index: 100;
 }
 
 .navbar .container {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
+}
+
+.navbar-left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.navbar-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .navbar-brand {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
-    font-size: 1.25rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.5rem;
     font-weight: 800;
-    letter-spacing: -0.02em;
-    color: var(--text-primary);
+    letter-spacing: 0.05em;
     text-decoration: none;
+    text-transform: uppercase;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .theme-toggle {
@@ -46,7 +63,7 @@
 }
 
 .navbar-brand span {
-    font-size: 1.5rem;
+    font-size: 2.2rem;
 }
 
 .navbar-stats {
@@ -84,6 +101,25 @@
 }
 
 @media (max-width: 768px) {
+    .navbar .container {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .navbar-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .navbar-brand span {
+        font-size: 1.5rem;
+    }
+
     .navbar-stats {
         gap: var(--space-sm);
     }

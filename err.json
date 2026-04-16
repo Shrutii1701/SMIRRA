@@ -1,0 +1,39 @@
+{
+  "success": true,
+  "data": {
+    "interviewId": "69bd01f03c661140bd0059ae",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Write a JavaScript function to flatten a nested object into a single-level object, where each key in the resulting object is a concatenation of the keys from the original object, separated by a dot. For example, {a: {b: {c: 1}}} should become {a.b.c: 1}.",
+        "expectedConcepts": [
+          "recursion",
+          "object iteration",
+          "key concatenation",
+          "nested objects"
+        ],
+        "difficulty": "intermediate",
+        "type": "problem-solving"
+      }
+    ],
+    "meta": {
+      "topic": {
+        "id": "javascript",
+        "name": "JavaScript",
+        "icon": "🟨",
+        "subtopics": [
+          "closures",
+          "prototypes",
+          "async/await",
+          "event loop",
+          "ES6+",
+          "DOM",
+          "error handling"
+        ]
+      },
+      "difficulty": "intermediate",
+      "count": 1,
+      "generatedAt": "2026-03-20T08:14:40.468Z"
+    }
+  }
+}

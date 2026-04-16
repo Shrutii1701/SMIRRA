@@ -1,7 +1,7 @@
 {
-    "name": "arena-server",
+    "name": "smirra-server",
     "version": "1.0.0",
-    "description": "Backend API for AI Interview Practice Arena",
+    "description": "Backend API for SMIRRA",
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
