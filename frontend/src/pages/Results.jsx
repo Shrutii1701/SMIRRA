@@ -1,15 +1,38 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { Award, ShieldAlert, CheckCircle, ChevronDown, BookOpen, LayoutDashboard, Sparkles, Clock, Zap } from 'lucide-react';
+import { Award, ShieldAlert, CheckCircle, ChevronDown, BookOpen, LayoutDashboard, Sparkles, Clock, Zap, Trophy } from 'lucide-react';
+import { ACHIEVEMENTS, unlockedIds } from '../data/achievements';
+
+const SEEN_KEY = 'smirra_seen_achievements';
 
 export default function Results() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { addSession } = useUser();
+  const { addSession, user } = useUser();
   const effectRan = useRef(false);
 
+  const [newlyUnlocked, setNewlyUnlocked] = useState([]);
+
   const { topic, difficulty, gradedResponses } = location.state || {};
+
+  // Detect achievements unlocked but not yet celebrated. Runs whenever the user
+  // updates (i.e. after this session's XP/history is recorded).
+  useEffect(() => {
+    if (!user) return;
+    const current = unlockedIds(user);
+    let seen = [];
+    try {
+      seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '[]');
+    } catch (e) {
+      seen = [];
+    }
+    const fresh = current.filter((id) => !seen.includes(id));
+    if (fresh.length > 0) {
+      setNewlyUnlocked(fresh.map((id) => ACHIEVEMENTS.find((a) => a.id === id)).filter(Boolean));
+    }
+    localStorage.setItem(SEEN_KEY, JSON.stringify(current));
+  }, [user]);
 
   // Redirect if accessed directly without data
   useEffect(() => {
@@ -83,6 +106,38 @@ export default function Results() {
           </div>
         </div>
       </div>
+
+      {/* Newly Unlocked Achievements */}
+      {newlyUnlocked.length > 0 && (
+        <div className="glass-card p-6 mb-8 border-yellow-400/30 bg-gradient-to-r from-yellow-400/[0.04] to-transparent animate-slide-up">
+          <div className="flex items-center gap-2 mb-4">
+            <Trophy className="h-5 w-5 text-yellow-400" />
+            <h3 className="text-base font-bold text-slate-100">
+              Achievement{newlyUnlocked.length > 1 ? 's' : ''} Unlocked!
+            </h3>
+            <span className="text-xs text-slate-400">+{newlyUnlocked.length} new</span>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {newlyUnlocked.map((a) => {
+              const Icon = a.icon;
+              return (
+                <div
+                  key={a.id}
+                  className="flex items-center gap-3 rounded-2xl border border-yellow-400/25 bg-white/[0.03] px-4 py-3"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-yellow-400/30 bg-yellow-400/10 text-yellow-400">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-100 leading-tight">{a.title}</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">{a.description}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Grid: Stats vs Question Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

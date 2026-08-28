@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { Award, Calendar, ChevronRight, Flame, BarChart3, Clock, BookOpen, User } from 'lucide-react';
+import AchievementsPanel from '../components/AchievementsPanel';
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -186,6 +187,11 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Achievements */}
+      <div className="mt-8">
+        <AchievementsPanel user={user} />
       </div>
     </div>
   );

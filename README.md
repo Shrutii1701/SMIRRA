@@ -12,6 +12,7 @@ XP, streaks, time bonuses, and a combo system.
 - **Gamification** — XP, levels, and daily streaks, with per-answer scoring bonuses:
   - **Time bonus** — faster answers earn more (`<30s` → +20, `30–60s` → +10, `60–90s` → +5).
   - **Combo system** — consecutive strong answers (score ≥ 70) build a combo multiplier; a weak answer resets it.
+  - **Achievements** — 14 unlockable badges across bronze/silver/gold/platinum tiers (session milestones, scores, streaks, level, and topic breadth), shown on the dashboard with progress bars and celebrated on the results screen when freshly earned.
 - **Protected practice arena** — lightweight local login (stored in `localStorage`) gating the dashboard, setup, interview, and results pages.
 
 ## Tech Stack
