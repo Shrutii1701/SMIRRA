@@ -18,7 +18,7 @@ function getModel() {
     throw new Error('Gemini API key is not configured. Please add GEMINI_API_KEY to your backend/.env file.');
   }
   return genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-flash-lite-latest',
     generationConfig: {
       responseMimeType: 'application/json',
     },
