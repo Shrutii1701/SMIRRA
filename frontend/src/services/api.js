@@ -1,22 +1,44 @@
 const API_BASE = 'http://localhost:5000/api';
 
+const OFFLINE_MESSAGE =
+  'Cannot reach the SMIRRA server. Make sure the backend is running (run "npm run dev" in the backend folder), then try again.';
+
+/**
+ * Shared fetch wrapper. Converts a dropped connection (backend not running)
+ * into a clear, actionable message instead of the browser's raw "Failed to
+ * fetch", and surfaces the server's error text for non-2xx responses.
+ */
+async function request(path, { method = 'GET', body, fallbackError } = {}) {
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch (err) {
+    // Network-level failure (server down, connection refused, CORS, offline).
+    throw new Error(OFFLINE_MESSAGE);
+  }
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.error || fallbackError || 'Request failed.');
+  }
+
+  return response.json();
+}
+
 /**
  * Passwordless login: upserts the user by email on the backend and returns
  * their full profile (including persisted session history).
  */
 export async function loginUser(name, email) {
-  const response = await fetch(`${API_BASE}/user/login`, {
+  const data = await request('/user/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email }),
+    body: { name, email },
+    fallbackError: 'Failed to log in.',
   });
-
-  if (!response.ok) {
-    const errData = await response.json().catch(() => ({}));
-    throw new Error(errData.error || 'Failed to log in.');
-  }
-
-  const data = await response.json();
   return data.user;
 }
 
@@ -24,12 +46,7 @@ export async function loginUser(name, email) {
  * Fetch a user's current profile + history by id (used to sync on app load).
  */
 export async function fetchUser(id) {
-  const response = await fetch(`${API_BASE}/user/${id}`);
-  if (!response.ok) {
-    const errData = await response.json().catch(() => ({}));
-    throw new Error(errData.error || 'Failed to load user.');
-  }
-  const data = await response.json();
+  const data = await request(`/user/${id}`, { fallbackError: 'Failed to load user.' });
   return data.user;
 }
 
@@ -38,43 +55,22 @@ export async function fetchUser(id) {
  * (with recomputed XP, level, and streak) back from the backend.
  */
 export async function saveSession(userId, { topic, difficulty, gradedResponses }) {
-  const response = await fetch(`${API_BASE}/user/${userId}/session`, {
+  return request(`/user/${userId}/session`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ topic, difficulty, gradedResponses }),
-  });
-
-  if (!response.ok) {
-    const errData = await response.json().catch(() => ({}));
-    throw new Error(errData.error || 'Failed to save session.');
-  }
-
-  return await response.json(); // { user, xpGained }
+    body: { topic, difficulty, gradedResponses },
+    fallbackError: 'Failed to save session.',
+  }); // { user, xpGained }
 }
 
 /**
- * Request next question from the Gemini backend proxy.
+ * Request the next question from the Gemini backend proxy.
  */
 export async function fetchQuestion(topic, difficulty, questionType, previousQuestions = []) {
-  const response = await fetch(`${API_BASE}/interview/question`, {
+  const data = await request('/interview/question', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      topic,
-      difficulty,
-      questionType,
-      previousQuestions,
-    }),
+    body: { topic, difficulty, questionType, previousQuestions },
+    fallbackError: 'Failed to fetch question from server.',
   });
-
-  if (!response.ok) {
-    const errData = await response.json().catch(() => ({}));
-    throw new Error(errData.error || 'Failed to fetch question from server.');
-  }
-
-  const data = await response.json();
   return data.question;
 }
 
@@ -92,12 +88,9 @@ export async function submitAnswer({
   consecutiveCorrect,
   consecutiveStruggle,
 }) {
-  const response = await fetch(`${API_BASE}/interview/evaluate`, {
+  return request('/interview/evaluate', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+    body: {
       question,
       answer,
       topic,
@@ -106,13 +99,7 @@ export async function submitAnswer({
       combo,
       consecutiveCorrect,
       consecutiveStruggle,
-    }),
+    },
+    fallbackError: 'Failed to evaluate answer on server.',
   });
-
-  if (!response.ok) {
-    const errData = await response.json().catch(() => ({}));
-    throw new Error(errData.error || 'Failed to evaluate answer on server.');
-  }
-
-  return await response.json();
 }

@@ -19,7 +19,7 @@ export default function Home() {
         {/* Hero Title */}
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 font-sans text-gradient">
           Master Your Next Tech Interview <br />
-          <span className="text-gradient-rainbow">With Antigravity-Grade AI</span>
+          <span className="text-gradient-rainbow">With AI-Powered Practice</span>
         </h1>
 
         {/* Hero Subtitle */}

@@ -280,7 +280,7 @@ export default function Interview() {
           {isLoadingQuestion ? (
             <div className="flex flex-col items-center justify-center py-10 text-slate-400">
               <Loader2 className="h-8 w-8 animate-spin text-brand-cyan mb-3" />
-              <p className="text-xs tracking-wider">Antigravity AI is formulating question...</p>
+              <p className="text-xs tracking-wider">AI is formulating your question...</p>
             </div>
           ) : (
             <div>

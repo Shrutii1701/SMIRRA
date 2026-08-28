@@ -99,7 +99,7 @@ export default function App() {
           
           {/* Footer */}
           <footer className="w-full border-t border-dark-border/20 py-6 text-center text-xs text-slate-500 bg-dark-bg/40">
-            <p>© {new Date().getFullYear()} SMIRRA Interview Practice Arena. Built with Antigravity AI.</p>
+            <p>© {new Date().getFullYear()} SMIRRA Interview Practice Arena.</p>
           </footer>
         </div>
       </Router>

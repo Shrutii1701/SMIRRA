@@ -56,7 +56,7 @@ export default function InterviewSetup() {
           Mock Practice Portal
         </h1>
         <p className="text-slate-400 mt-2 max-w-xl mx-auto">
-          Configure your mock exam details below. The Antigravity AI engine adapts question depth based on your selected fields.
+          Configure your mock exam details below. The AI engine adapts question depth based on your selected fields.
         </p>
       </div>
 
