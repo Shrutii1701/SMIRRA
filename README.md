@@ -20,6 +20,7 @@ XP, streaks, time bonuses, and a combo system.
 | --------- | ----------------------------------------------------------------- |
 | Frontend  | React 19, Vite, React Router, Tailwind CSS, lucide-react          |
 | Backend   | Node.js, Express, `@google/generative-ai` (Gemini)                |
+| Database  | MongoDB via Mongoose (optional; falls back to `localStorage`)      |
 | AI Model  | Google Gemini `gemini-1.5-flash`                                  |
 
 The backend acts as a **proxy server** so the Gemini API key stays on the server and is never exposed to the browser.
@@ -29,16 +30,27 @@ The backend acts as a **proxy server** so the Gemini API key stays on the server
 ```
 SMIRRA/
 ├── backend/
-│   ├── routes/interviewRoutes.js    # /question and /evaluate endpoints + scoring logic
-│   ├── services/geminiService.js    # Gemini prompt building & response parsing
-│   ├── server.js                    # Express app entry point
-│   └── .env.example                 # Environment variable template
+│   ├── config/db.js                    # Mongoose connection
+│   ├── controllers/
+│   │   ├── interviewController.js       # question generation + answer evaluation
+│   │   └── userController.js            # login, profile, session persistence
+│   ├── models/
+│   │   ├── User.js                      # user + gamification state
+│   │   └── Interview.js                 # completed session records
+│   ├── routes/
+│   │   ├── interviewRoutes.js           # /api/interview/*
+│   │   └── userRoutes.js                # /api/user/*
+│   ├── services/
+│   │   ├── geminiService.js             # Gemini prompt building & JSON parsing
+│   │   └── scoringService.js            # time bonus, combo, XP/level/streak
+│   ├── server.js                        # Express app entry point
+│   └── .env.example                     # Environment variable template
 └── frontend/
     ├── src/
-    │   ├── pages/                    # Home, Login, Dashboard, InterviewSetup, Interview, Results
-    │   ├── components/              # Navbar
-    │   ├── context/UserContext.jsx  # Auth + user progress state
-    │   └── services/api.js          # Calls to the backend proxy
+    │   ├── pages/                       # Home, Login, Dashboard, InterviewSetup, Interview, Results
+    │   ├── components/                  # Navbar
+    │   ├── context/UserContext.jsx      # Auth + user progress (syncs with backend)
+    │   └── services/api.js              # Calls to the backend proxy
     └── vite.config.js
 ```
 
@@ -74,7 +86,13 @@ Then edit `backend/.env`:
 ```
 PORT=5000
 GEMINI_API_KEY=your_gemini_api_key_here
+MONGODB_URI=your_mongodb_connection_string_here
 ```
+
+> `MONGODB_URI` enables account persistence and interview history (a free
+> [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register) cluster or a local
+> `mongodb://127.0.0.1:27017/smirra`). If you leave it blank the app still runs, but
+> falls back to browser-only (`localStorage`) storage with no server-side history.
 
 Start the backend server:
 
@@ -102,11 +120,14 @@ The app runs at `http://localhost:5173` (Vite's default) and talks to the backen
 
 Base URL: `http://localhost:5000/api`
 
-| Method | Endpoint               | Description                                                          |
-| ------ | ---------------------- | ------------------------------------------------------------------- |
-| `GET`  | `/health`              | Health check.                                                       |
-| `POST` | `/interview/question`  | Generate a question. Body: `topic`, `difficulty`, `questionType`, `previousQuestions`. |
-| `POST` | `/interview/evaluate`  | Evaluate an answer and compute bonuses. Body: `question`, `answer`, `topic`, `difficulty`, `timeTaken`, `combo`. |
+| Method | Endpoint                | Description                                                          |
+| ------ | ----------------------- | ------------------------------------------------------------------- |
+| `GET`  | `/health`               | Health check.                                                       |
+| `POST` | `/interview/question`   | Generate a question. Body: `topic`, `difficulty`, `questionType`, `previousQuestions`. |
+| `POST` | `/interview/evaluate`   | Evaluate an answer and compute bonuses. Body: `question`, `answer`, `topic`, `difficulty`, `timeTaken`, `combo`. |
+| `POST` | `/user/login`           | Passwordless login — upserts the user by email, returns profile + history. Body: `name`, `email`. |
+| `GET`  | `/user/:id`             | Fetch a user's profile and interview history.                       |
+| `POST` | `/user/:id/session`     | Persist a completed interview and update XP/level/streak. Body: `topic`, `difficulty`, `gradedResponses`. |
 
 ## Scripts
 
@@ -122,10 +143,11 @@ Base URL: `http://localhost:5000/api`
 
 ## Environment Variables
 
-| Variable         | Location      | Description                          |
-| ---------------- | ------------- | ------------------------------------ |
-| `PORT`           | `backend/.env`| Backend server port (default `5000`).|
-| `GEMINI_API_KEY` | `backend/.env`| Your Google Gemini API key.          |
+| Variable         | Location      | Description                                             |
+| ---------------- | ------------- | ------------------------------------------------------- |
+| `PORT`           | `backend/.env`| Backend server port (default `5000`).                   |
+| `GEMINI_API_KEY` | `backend/.env`| Your Google Gemini API key.                             |
+| `MONGODB_URI`    | `backend/.env`| MongoDB connection string. Optional — blank = local-only storage. |
 
 > **Note:** `backend/.env` is gitignored and must never be committed. Only `.env.example` is tracked.
 

@@ -9,19 +9,24 @@ export default function Login() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim()) {
       setError('Please enter your name to initialize practice.');
       return;
     }
-    
-    // Default email if empty
-    const finalEmail = email.trim() || `${name.trim().toLowerCase().replace(/\s+/g, '')}@smirra.local`;
-    
-    login(name.trim(), finalEmail);
-    navigate('/dashboard');
+
+    setSubmitting(true);
+    setError('');
+    try {
+      await login(name.trim(), email.trim());
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Failed to start session. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -94,9 +99,10 @@ export default function Login() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full btn-gradient flex items-center justify-center gap-2 py-3.5 text-sm"
+              disabled={submitting}
+              className="w-full btn-gradient flex items-center justify-center gap-2 py-3.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Access Practice Arena
+              {submitting ? 'Initializing…' : 'Access Practice Arena'}
               <ArrowRight className="h-4 w-4" />
             </button>
           </form>

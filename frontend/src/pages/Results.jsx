@@ -18,31 +18,13 @@ export default function Results() {
     }
   }, [gradedResponses, navigate]);
 
-  // Save session once on mount
+  // Save session once on mount. Aggregation + XP/level/streak now happen in the
+  // context (backend-backed, with a local fallback), so we just hand over the
+  // raw graded responses.
   useEffect(() => {
     if (gradedResponses && gradedResponses.length > 0 && !effectRan.current) {
       effectRan.current = true;
-
-      // Calculate averages and bonuses
-      const count = gradedResponses.length;
-      const avgScore = Math.round(gradedResponses.reduce((sum, r) => sum + r.totalScore, 0) / count);
-      const totalTimeBonus = gradedResponses.reduce((sum, r) => sum + r.timeBonus, 0);
-      const totalComboBonus = gradedResponses.reduce((sum, r) => sum + r.comboBonus, 0);
-
-      // Collect feedback summary
-      const topFeedback = gradedResponses[0]?.evaluation?.feedback || '';
-
-      addSession({
-        topic,
-        difficulty,
-        score: avgScore,
-        timeBonus: totalTimeBonus,
-        comboBonus: totalComboBonus,
-        evaluation: {
-          feedbackSummary: topFeedback,
-          itemsCount: count,
-        }
-      });
+      addSession({ topic, difficulty, gradedResponses });
     }
   }, [gradedResponses]);
 

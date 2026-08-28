@@ -1,84 +1,127 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { loginUser, fetchUser, saveSession as saveSessionApi } from '../services/api';
 
 const UserContext = createContext();
+
+const STORAGE_KEY = 'smirra_user';
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem('smirra_user');
-    if (storedUser) {
-      try {
-        const parsed = JSON.parse(storedUser);
-        setUser(parsed);
-      } catch (e) {
-        localStorage.removeItem('smirra_user');
-      }
-    }
-    setLoading(false);
-  }, []);
-
-  // Update localStorage whenever user state changes
+  // Persist the profile locally as a cache for instant loads and offline viewing.
   const saveUser = (updatedUser) => {
     setUser(updatedUser);
     if (updatedUser) {
-      localStorage.setItem('smirra_user', JSON.stringify(updatedUser));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
     } else {
-      localStorage.removeItem('smirra_user');
+      localStorage.removeItem(STORAGE_KEY);
     }
   };
 
-  const login = (name, email) => {
-    const newUser = {
-      name,
-      email,
-      registeredDate: new Date().toISOString(),
-      xp: 0,
-      level: 1,
-      streak: 1,
-      lastPracticeDate: new Date().toDateString(),
-      sessionsHistory: [],
-    };
-    saveUser(newUser);
+  // On mount: hydrate from cache instantly, then refresh from the backend if
+  // this is a server-backed account.
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    let cached = null;
+    if (stored) {
+      try {
+        cached = JSON.parse(stored);
+        setUser(cached);
+      } catch (e) {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    async function sync() {
+      if (cached && cached.id && !cached.local) {
+        try {
+          const fresh = await fetchUser(cached.id);
+          saveUser(fresh);
+        } catch (e) {
+          // Backend unreachable — keep showing the cached profile.
+        }
+      }
+      setLoading(false);
+    }
+    sync();
+  }, []);
+
+  /**
+   * Log in. Tries the backend first; if it is unreachable or the database is
+   * not configured, falls back to a local-only profile so the app still works.
+   */
+  const login = async (name, email) => {
+    try {
+      const profile = await loginUser(name, email);
+      saveUser(profile);
+      return profile;
+    } catch (e) {
+      // Local fallback (no persistence beyond this browser).
+      const finalEmail = email?.trim() || `${name.trim().toLowerCase().replace(/\s+/g, '')}@smirra.local`;
+      const localUser = {
+        id: null,
+        local: true,
+        name: name.trim(),
+        email: finalEmail,
+        registeredDate: new Date().toISOString(),
+        xp: 0,
+        level: 1,
+        streak: 1,
+        lastPracticeDate: new Date().toDateString(),
+        sessionsHistory: [],
+      };
+      saveUser(localUser);
+      return localUser;
+    }
   };
 
   const logout = () => {
     saveUser(null);
   };
 
-  const addSession = (session) => {
+  /**
+   * Record a completed interview. Server-backed accounts persist to MongoDB and
+   * receive recomputed XP/level/streak; local accounts compute it in-browser.
+   */
+  const addSession = async ({ topic, difficulty, gradedResponses }) => {
     if (!user) return;
 
-    // Calculate XP reward: Base Score (e.g. 50 score = 50 XP) + Time Bonus + Combo Bonus
-    const baseScore = session.score;
-    const timeBonus = session.timeBonus || 0;
-    const comboBonus = session.comboBonus || 0;
-    const xpGained = baseScore + timeBonus + comboBonus;
+    if (user.id && !user.local) {
+      try {
+        const { user: updated } = await saveSessionApi(user.id, { topic, difficulty, gradedResponses });
+        saveUser(updated);
+        return;
+      } catch (e) {
+        // Fall through to local computation if the save fails.
+      }
+    }
+
+    // Local fallback progression (mirrors backend scoringService).
+    const count = gradedResponses.length;
+    const avgScore = Math.round(
+      gradedResponses.reduce((sum, r) => sum + (r.evaluation?.overallScore || 0), 0) / count
+    );
+    const timeBonus = gradedResponses.reduce((sum, r) => sum + (r.timeBonus || 0), 0);
+    const comboBonus = gradedResponses.reduce((sum, r) => sum + (r.comboBonus || 0), 0);
+    const xpGained = avgScore + timeBonus + comboBonus;
 
     const newXp = user.xp + xpGained;
-    const newLevel = Math.floor(newXp / 500) + 1; // 500 XP per level
+    const newLevel = Math.floor(newXp / 500) + 1;
 
-    // Streak checking
     const today = new Date().toDateString();
     let newStreak = user.streak;
-    
     if (user.lastPracticeDate) {
-      const lastPractice = new Date(user.lastPracticeDate);
-      const diffTime = Math.abs(new Date(today) - lastPractice);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
-      if (diffDays === 1) {
-        newStreak += 1;
-      } else if (diffDays > 1) {
-        newStreak = 1; // Reset streak
-      }
+      const diffDays = Math.ceil(
+        Math.abs(new Date(today) - new Date(user.lastPracticeDate)) / (1000 * 60 * 60 * 24)
+      );
+      if (diffDays === 1) newStreak += 1;
+      else if (diffDays > 1) newStreak = 1;
     } else {
       newStreak = 1;
     }
 
-    const updatedUser = {
+    saveUser({
       ...user,
       xp: newXp,
       level: newLevel,
@@ -88,17 +131,18 @@ export function UserProvider({ children }) {
         {
           id: Date.now().toString(),
           date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-          topic: session.topic,
-          difficulty: session.difficulty,
-          score: session.score,
+          topic,
+          difficulty,
+          score: avgScore,
           xpEarned: xpGained,
-          evaluation: session.evaluation, // contains missingConcepts, feedback, etc.
+          evaluation: {
+            feedbackSummary: gradedResponses[0]?.evaluation?.feedback || '',
+            itemsCount: count,
+          },
         },
         ...user.sessionsHistory,
       ],
-    };
-
-    saveUser(updatedUser);
+    });
   };
 
   return (

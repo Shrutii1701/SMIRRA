@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { connectDB } from './config/db.js';
 import interviewRoutes from './routes/interviewRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
 
@@ -16,9 +18,13 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'SMIRRA Backend is running' });
 });
 
-// Interview API routes
+// API routes
 app.use('/api/interview', interviewRoutes);
+app.use('/api/user', userRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Connect to MongoDB (non-fatal if unavailable), then start the server.
+connectDB().finally(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 });
