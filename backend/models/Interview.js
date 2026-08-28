@@ -25,6 +25,7 @@ const gradedResponseSchema = new mongoose.Schema(
   {
     question: String,
     answer: String,
+    difficulty: String, // the (possibly adapted) difficulty this question ran at
     timeTaken: Number,
     timeBonus: Number,
     comboBonus: Number,

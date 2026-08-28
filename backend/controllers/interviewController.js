@@ -1,5 +1,5 @@
 import { generateQuestion, evaluateAnswer } from '../services/geminiService.js';
-import { calculateAnswerScore } from '../services/scoringService.js';
+import { calculateAnswerScore, adaptDifficulty } from '../services/scoringService.js';
 
 /**
  * POST /api/interview/question
@@ -32,7 +32,16 @@ export async function getQuestion(req, res) {
  * Grade an answer with the AI, then apply time and combo bonuses.
  */
 export async function postEvaluation(req, res) {
-  const { question, answer, topic, difficulty, timeTaken, combo } = req.body;
+  const {
+    question,
+    answer,
+    topic,
+    difficulty,
+    timeTaken,
+    combo,
+    consecutiveCorrect,
+    consecutiveStruggle,
+  } = req.body;
 
   if (!question || !topic || !difficulty) {
     return res
@@ -49,7 +58,26 @@ export async function postEvaluation(req, res) {
       combo: combo || 0,
     });
 
-    res.json({ evaluation, timeBonus, comboBonus, totalScore, nextCombo });
+    // Adaptive difficulty for the next question.
+    const adaptation = adaptDifficulty({
+      difficulty,
+      aiScore: evaluation.overallScore,
+      consecutiveCorrect: consecutiveCorrect || 0,
+      consecutiveStruggle: consecutiveStruggle || 0,
+    });
+
+    res.json({
+      evaluation,
+      timeBonus,
+      comboBonus,
+      totalScore,
+      nextCombo,
+      nextDifficulty: adaptation.difficulty,
+      consecutiveCorrect: adaptation.consecutiveCorrect,
+      consecutiveStruggle: adaptation.consecutiveStruggle,
+      difficultyChanged: adaptation.changed,
+      difficultyDirection: adaptation.direction,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message || 'Failed to evaluate answer.' });
   }

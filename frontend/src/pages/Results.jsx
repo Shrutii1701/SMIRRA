@@ -184,7 +184,20 @@ export default function Results() {
             <div key={index} className="glass-card p-6 border-dark-border/40 hover:border-dark-border/80 transition-colors">
               <div className="flex justify-between items-start gap-4 mb-4">
                 <div>
-                  <span className="text-xs text-brand-cyan font-bold tracking-wider">QUESTION {index + 1} OF 3</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-brand-cyan font-bold tracking-wider">QUESTION {index + 1} OF {count}</span>
+                    {res.difficulty && (
+                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${
+                        res.difficulty === 'Hard'
+                          ? 'border-brand-rose/25 bg-brand-rose/10 text-brand-rose'
+                          : res.difficulty === 'Medium'
+                          ? 'border-brand-primary/25 bg-brand-primary/10 text-brand-primary'
+                          : 'border-brand-cyan/25 bg-brand-cyan/10 text-brand-cyan'
+                      }`}>
+                        {res.difficulty}
+                      </span>
+                    )}
+                  </div>
                   <h4 className="text-base font-semibold text-slate-100 mt-1">{res.question}</h4>
                 </div>
                 <div className="text-right">

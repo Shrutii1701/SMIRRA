@@ -4,7 +4,11 @@
  */
 
 const CORRECT_THRESHOLD = 70; // overallScore >= this counts as a "correct" answer
+const STRUGGLE_THRESHOLD = 50; // overallScore < this counts as "struggling"
 const XP_PER_LEVEL = 500;
+
+// Ordered difficulty ladder used by adaptive difficulty.
+const DIFFICULTY_LEVELS = ['Easy', 'Medium', 'Hard'];
 
 /**
  * Time bonus based on how quickly the answer was submitted (seconds).
@@ -45,6 +49,53 @@ export function calculateAnswerScore({ aiScore, timeTaken, combo = 0 }) {
   const { comboBonus, nextCombo } = calculateCombo(aiScore, combo);
   const totalScore = Math.min(aiScore + timeBonus + comboBonus, 100);
   return { timeBonus, comboBonus, totalScore, nextCombo };
+}
+
+/**
+ * Adaptive difficulty. Tracks consecutive correct/struggling answers and shifts
+ * the difficulty one rung at a time:
+ *   - 3 correct in a row (score >= 70)   -> increase difficulty
+ *   - 2 struggles in a row (score < 50)  -> decrease difficulty
+ * Returns the difficulty to use for the NEXT question plus the updated counters.
+ *
+ * @param {Object} args
+ * @param {string} args.difficulty            - current difficulty
+ * @param {number} args.aiScore               - this answer's overallScore
+ * @param {number} [args.consecutiveCorrect]  - streak carried from prior answers
+ * @param {number} [args.consecutiveStruggle] - struggle streak carried in
+ */
+export function adaptDifficulty({ difficulty, aiScore, consecutiveCorrect = 0, consecutiveStruggle = 0 }) {
+  const correct = aiScore >= CORRECT_THRESHOLD;
+  const struggling = aiScore < STRUGGLE_THRESHOLD;
+
+  let cc = correct ? consecutiveCorrect + 1 : 0;
+  let cs = struggling ? consecutiveStruggle + 1 : 0;
+
+  let idx = DIFFICULTY_LEVELS.indexOf(difficulty);
+  if (idx === -1) idx = 1; // default to Medium if an unknown value slips in
+
+  let changed = false;
+  let direction = null;
+
+  if (cc >= 3 && idx < DIFFICULTY_LEVELS.length - 1) {
+    idx += 1;
+    changed = true;
+    direction = 'up';
+    cc = 0; // reset streak after a bump
+  } else if (cs >= 2 && idx > 0) {
+    idx -= 1;
+    changed = true;
+    direction = 'down';
+    cs = 0;
+  }
+
+  return {
+    difficulty: DIFFICULTY_LEVELS[idx],
+    consecutiveCorrect: cc,
+    consecutiveStruggle: cs,
+    changed,
+    direction,
+  };
 }
 
 /**

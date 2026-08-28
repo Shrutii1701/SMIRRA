@@ -79,9 +79,19 @@ export async function fetchQuestion(topic, difficulty, questionType, previousQue
 }
 
 /**
- * Submit user answer for grading, calculations of bonuses, and combo tracking.
+ * Submit user answer for grading, bonus calculation, combo tracking, and
+ * adaptive-difficulty adjustment.
  */
-export async function submitAnswer({ question, answer, topic, difficulty, timeTaken, combo }) {
+export async function submitAnswer({
+  question,
+  answer,
+  topic,
+  difficulty,
+  timeTaken,
+  combo,
+  consecutiveCorrect,
+  consecutiveStruggle,
+}) {
   const response = await fetch(`${API_BASE}/interview/evaluate`, {
     method: 'POST',
     headers: {
@@ -94,6 +104,8 @@ export async function submitAnswer({ question, answer, topic, difficulty, timeTa
       difficulty,
       timeTaken,
       combo,
+      consecutiveCorrect,
+      consecutiveStruggle,
     }),
   });
 
