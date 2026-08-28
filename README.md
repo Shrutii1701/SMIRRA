@@ -10,6 +10,7 @@ XP, streaks, time bonuses, and a combo system.
 - **AI-generated questions** — dynamic, non-repeating questions tailored to a chosen topic, difficulty, and question format (powered by `gemini-1.5-flash`).
 - **AI answer evaluation** — each answer is scored 0–100 across five metrics: technical accuracy, completeness, clarity, relevance, and communication, plus written feedback and a list of missing concepts.
 - **Adaptive difficulty** — each 5-question session adjusts itself as you go: 3 strong answers in a row (score ≥ 70) bumps the difficulty up a rung, while struggling (2 answers < 50) eases it back down, with the shift surfaced live in the interview.
+- **Interviewer personas** — pick the voice you practice against (Friendly Mentor, Strict Senior Engineer, Rapid-Fire Recruiter, or Socratic Professor); the persona shapes the AI's question style and feedback tone while keeping scoring objective.
 - **Gamification** — XP, levels, and daily streaks, with per-answer scoring bonuses:
   - **Time bonus** — faster answers earn more (`<30s` → +20, `30–60s` → +10, `60–90s` → +5).
   - **Combo system** — consecutive strong answers (score ≥ 70) build a combo multiplier; a weak answer resets it.

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchQuestion, submitAnswer } from '../services/api';
 import { AlertCircle, Clock, Zap, ArrowRight, Loader2, Sparkles, TrendingUp, TrendingDown } from 'lucide-react';
+import { getPersona } from '../data/personas';
 
 const TOTAL_QUESTIONS = 5;
 
@@ -10,10 +11,11 @@ export default function Interview() {
   const navigate = useNavigate();
 
   // Route state fallback if user direct-typed url
-  const { topic, difficulty, questionType } = location.state || {
+  const { topic, difficulty, questionType, persona } = location.state || {
     topic: 'DSA',
     difficulty: 'Medium',
     questionType: 'Mixed',
+    persona: 'mentor',
   };
 
   const startingDifficulty = difficulty;
@@ -68,7 +70,7 @@ export default function Interview() {
     setIsLoadingQuestion(true);
     setError('');
     try {
-      const qText = await fetchQuestion(topic, diff, questionType, pastQuestions);
+      const qText = await fetchQuestion(topic, diff, questionType, pastQuestions, persona);
       setQuestions((prev) => [...prev, qText]);
       setQuestionDifficulties((prev) => [...prev, diff]);
       setAnswer('');
@@ -107,6 +109,7 @@ export default function Interview() {
         combo,
         consecutiveCorrect: consecCorrect,
         consecutiveStruggle: consecStruggle,
+        persona,
       });
 
       // Save this graded response
@@ -223,8 +226,19 @@ export default function Interview() {
                 {currentDifficulty}
               </span>
             </div>
-            <h2 className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1.5">
+            <h2 className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1.5 flex items-center gap-1.5">
               Question {currentIdx + 1} of {TOTAL_QUESTIONS}
+              <span className="text-slate-600">•</span>
+              {(() => {
+                const p = getPersona(persona);
+                const PIcon = p.icon;
+                return (
+                  <span className="inline-flex items-center gap-1 text-brand-secondary normal-case tracking-normal">
+                    <PIcon className="h-3.5 w-3.5" />
+                    {p.label}
+                  </span>
+                );
+              })()}
             </h2>
           </div>
 

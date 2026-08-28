@@ -65,10 +65,10 @@ export async function saveSession(userId, { topic, difficulty, gradedResponses }
 /**
  * Request the next question from the Gemini backend proxy.
  */
-export async function fetchQuestion(topic, difficulty, questionType, previousQuestions = []) {
+export async function fetchQuestion(topic, difficulty, questionType, previousQuestions = [], persona) {
   const data = await request('/interview/question', {
     method: 'POST',
-    body: { topic, difficulty, questionType, previousQuestions },
+    body: { topic, difficulty, questionType, previousQuestions, persona },
     fallbackError: 'Failed to fetch question from server.',
   });
   return data.question;
@@ -87,6 +87,7 @@ export async function submitAnswer({
   combo,
   consecutiveCorrect,
   consecutiveStruggle,
+  persona,
 }) {
   return request('/interview/evaluate', {
     method: 'POST',
@@ -99,6 +100,7 @@ export async function submitAnswer({
       combo,
       consecutiveCorrect,
       consecutiveStruggle,
+      persona,
     },
     fallbackError: 'Failed to evaluate answer on server.',
   });

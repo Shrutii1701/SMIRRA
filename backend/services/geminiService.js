@@ -12,6 +12,29 @@ if (apiKey) {
   console.warn('WARNING: GEMINI_API_KEY environment variable is not defined in backend/.env. Live AI endpoints will fail.');
 }
 
+/**
+ * Interviewer personas. Each injects a distinct voice into the question and
+ * feedback prompts. The scoring metrics and JSON schema stay identical across
+ * personas — only tone and emphasis change.
+ */
+const PERSONA_STYLES = {
+  mentor:
+    'Adopt the persona of a warm, encouraging senior mentor. Frame questions supportively and keep feedback constructive and motivating, always highlighting strengths before gaps.',
+  strict:
+    'Adopt the persona of a strict, no-nonsense senior engineer with very high standards. Ask precise, probing questions and keep feedback blunt, direct, and demanding, without sugar-coating weaknesses.',
+  recruiter:
+    'Adopt the persona of a fast-paced technical recruiter. Favor concise, practical, real-world questions and give crisp, industry-focused feedback about hireability.',
+  professor:
+    'Adopt the persona of a Socratic computer-science professor. Ask conceptually deep "why" and "how" questions and give thoughtful, teaching-oriented feedback that builds understanding.',
+};
+
+const DEFAULT_STYLE =
+  'Adopt the persona of a professional, balanced technical interviewer with a neutral, fair tone.';
+
+function personaStyle(persona) {
+  return PERSONA_STYLES[persona] || DEFAULT_STYLE;
+}
+
 // Helper to get active model
 function getModel() {
   if (!genAI) {
@@ -28,17 +51,18 @@ function getModel() {
 /**
  * Generates one dynamic question based on topic, difficulty, format, and past questions.
  */
-export async function generateQuestion(topic, difficulty, questionType, previousQuestions = []) {
+export async function generateQuestion(topic, difficulty, questionType, previousQuestions = [], persona) {
   const model = getModel();
 
   const prompt = `
     You are an expert technical interviewer conducting a mock interview.
+    ${personaStyle(persona)}
     Generate exactly ONE interview question.
-    
+
     Topic: ${topic}
     Difficulty level: ${difficulty}
     Question style/format: ${questionType}
-    
+
     CRITICAL: Avoid repeating, duplicating, or heavily overlapping with these previously asked questions:
     ${previousQuestions.length > 0 ? previousQuestions.map((q, idx) => `[${idx + 1}] ${q}`).join('\n') : 'None'}
     
@@ -67,12 +91,14 @@ export async function generateQuestion(topic, difficulty, questionType, previous
 /**
  * Evaluates the user's answer to a question across multiple dimensions.
  */
-export async function evaluateAnswer(question, answer, topic, difficulty) {
+export async function evaluateAnswer(question, answer, topic, difficulty, persona) {
   const model = getModel();
 
   const prompt = `
     You are an expert technical interviewer. Evaluate the user's response to the given interview question.
-    
+    ${personaStyle(persona)}
+    Keep your numeric scoring fair and objective regardless of persona; only the wording of "feedback" should reflect the persona's tone.
+
     Context:
     Topic: ${topic}
     Expected Difficulty: ${difficulty}

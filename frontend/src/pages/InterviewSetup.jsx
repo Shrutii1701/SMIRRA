@@ -13,12 +13,14 @@ import {
   Flame,
   Gauge
 } from 'lucide-react';
+import { PERSONAS, DEFAULT_PERSONA } from '../data/personas';
 
 export default function InterviewSetup() {
   const navigate = useNavigate();
   const [topic, setTopic] = useState('DSA');
   const [difficulty, setDifficulty] = useState('Medium');
   const [questionType, setQuestionType] = useState('Mixed');
+  const [persona, setPersona] = useState(DEFAULT_PERSONA);
 
   const topics = [
     { id: 'Technical', label: 'Technical Core', icon: Cpu, desc: 'Computer networks, operating systems, and general architecture.' },
@@ -45,7 +47,7 @@ export default function InterviewSetup() {
 
   const handleStart = () => {
     // Navigate to interview page with selected options (state)
-    navigate('/interview', { state: { topic, difficulty, questionType } });
+    navigate('/interview', { state: { topic, difficulty, questionType, persona } });
   };
 
   return (
@@ -168,6 +170,41 @@ export default function InterviewSetup() {
                 );
               })}
             </div>
+          </div>
+        </div>
+
+        {/* Step 4: Interviewer Persona */}
+        <div>
+          <div className="flex items-center gap-2 mb-4 border-b border-dark-border/20 pb-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-primary/20 text-brand-primary text-xs font-bold border border-brand-primary/30">4</span>
+            <h2 className="text-lg font-bold text-slate-200">Choose Interviewer Persona</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {PERSONAS.map((p) => {
+              const Icon = p.icon;
+              const isSelected = persona === p.id;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => setPersona(p.id)}
+                  className={`text-left p-5 glass-card glass-card-hover border transition-all duration-200 flex flex-col items-start ${
+                    isSelected
+                      ? 'border-brand-secondary/60 bg-brand-secondary/[0.04] shadow-md shadow-brand-secondary/5 -translate-y-0.5'
+                      : 'border-dark-border/40 hover:border-dark-border/90'
+                  }`}
+                >
+                  <div className={`p-3 rounded-xl mb-4 border ${
+                    isSelected
+                      ? 'bg-brand-secondary/10 text-brand-secondary border-brand-secondary/20'
+                      : 'bg-white/5 text-slate-400 border-dark-border/60'
+                  }`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-bold text-slate-200 text-sm mb-1">{p.label}</h3>
+                  <p className="text-xs text-slate-400 leading-normal mt-0.5">{p.desc}</p>
+                </button>
+              );
+            })}
           </div>
         </div>
 

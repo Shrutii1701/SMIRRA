@@ -6,7 +6,7 @@ import { calculateAnswerScore, adaptDifficulty } from '../services/scoringServic
  * Generate a single, non-repeating interview question.
  */
 export async function getQuestion(req, res) {
-  const { topic, difficulty, questionType, previousQuestions } = req.body;
+  const { topic, difficulty, questionType, previousQuestions, persona } = req.body;
 
   if (!topic || !difficulty || !questionType) {
     return res
@@ -19,7 +19,8 @@ export async function getQuestion(req, res) {
       topic,
       difficulty,
       questionType,
-      previousQuestions || []
+      previousQuestions || [],
+      persona
     );
     res.json({ question });
   } catch (error) {
@@ -41,6 +42,7 @@ export async function postEvaluation(req, res) {
     combo,
     consecutiveCorrect,
     consecutiveStruggle,
+    persona,
   } = req.body;
 
   if (!question || !topic || !difficulty) {
@@ -50,7 +52,7 @@ export async function postEvaluation(req, res) {
   }
 
   try {
-    const evaluation = await evaluateAnswer(question, answer, topic, difficulty);
+    const evaluation = await evaluateAnswer(question, answer, topic, difficulty, persona);
 
     const { timeBonus, comboBonus, totalScore, nextCombo } = calculateAnswerScore({
       aiScore: evaluation.overallScore,
