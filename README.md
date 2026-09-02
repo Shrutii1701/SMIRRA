@@ -15,6 +15,8 @@ XP, streaks, time bonuses, and a combo system.
   - **Time bonus** — faster answers earn more (`<30s` → +20, `30–60s` → +10, `60–90s` → +5).
   - **Combo system** — consecutive strong answers (score ≥ 70) build a combo multiplier; a weak answer resets it.
   - **Achievements** — 14 unlockable badges across bronze/silver/gold/platinum tiers (session milestones, scores, streaks, level, and topic breadth), shown on the dashboard with progress bars and celebrated on the results screen when freshly earned.
+  - **Daily challenge** — one shared topic + difficulty per calendar day, featured on the dashboard and marked complete once you finish it.
+  - **Leaderboard** — global ranking of all users by total XP (with level, streak, and session counts), highlighting your own row.
 - **Protected practice arena** — lightweight local login (stored in `localStorage`) gating the dashboard, setup, interview, and results pages.
 
 ## Tech Stack
@@ -129,6 +131,7 @@ Base URL: `http://localhost:5000/api`
 | `POST` | `/interview/question`   | Generate a question. Body: `topic`, `difficulty`, `questionType`, `previousQuestions`. |
 | `POST` | `/interview/evaluate`   | Evaluate an answer and compute bonuses. Body: `question`, `answer`, `topic`, `difficulty`, `timeTaken`, `combo`. |
 | `POST` | `/user/login`           | Passwordless login — upserts the user by email, returns profile + history. Body: `name`, `email`. |
+| `GET`  | `/user/leaderboard`     | Top users ranked by XP (query: `limit`, default 20, max 50).        |
 | `GET`  | `/user/:id`             | Fetch a user's profile and interview history.                       |
 | `POST` | `/user/:id/session`     | Persist a completed interview and update XP/level/streak. Body: `topic`, `difficulty`, `gradedResponses`. |
 

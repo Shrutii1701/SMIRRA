@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { LayoutDashboard, Play, LogOut, Award, Flame, User } from 'lucide-react';
+import { LayoutDashboard, Play, LogOut, Award, Flame, User, Trophy } from 'lucide-react';
 
 export default function Navbar() {
   const location = useLocation();
@@ -24,6 +24,7 @@ export default function Navbar() {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/setup', label: 'Start Practice', icon: Play },
+    { path: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   ];
 
   const isActive = (path) => location.pathname === path;

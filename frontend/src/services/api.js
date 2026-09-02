@@ -51,6 +51,16 @@ export async function fetchUser(id) {
 }
 
 /**
+ * Fetch the XP leaderboard (top users by experience).
+ */
+export async function fetchLeaderboard(limit = 20) {
+  const data = await request(`/user/leaderboard?limit=${limit}`, {
+    fallbackError: 'Failed to load leaderboard.',
+  });
+  return data.leaderboard;
+}
+
+/**
  * Persist a completed interview session and receive the updated profile
  * (with recomputed XP, level, and streak) back from the backend.
  */

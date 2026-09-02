@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { Award, Calendar, ChevronRight, Flame, BarChart3, Clock, BookOpen, User } from 'lucide-react';
 import AchievementsPanel from '../components/AchievementsPanel';
+import DailyChallengeCard from '../components/DailyChallengeCard';
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -49,6 +50,9 @@ export default function Dashboard() {
           Start New Practice
         </Link>
       </div>
+
+      {/* Daily Challenge */}
+      <DailyChallengeCard user={user} />
 
       {/* Grid of Key Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

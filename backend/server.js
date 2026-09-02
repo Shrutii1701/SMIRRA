@@ -22,9 +22,11 @@ app.get('/api/health', (req, res) => {
 app.use('/api/interview', interviewRoutes);
 app.use('/api/user', userRoutes);
 
-// Connect to MongoDB (non-fatal if unavailable), then start the server.
-connectDB().finally(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+// Start the HTTP server immediately so the API is responsive even while the
+// database connection is still being established (or is unavailable).
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
+
+// Connect to MongoDB in the background (non-fatal if unavailable).
+connectDB();

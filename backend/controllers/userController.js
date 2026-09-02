@@ -90,6 +90,42 @@ export async function loginUser(req, res) {
 }
 
 /**
+ * GET /api/user/leaderboard
+ * Top users ranked by XP, with their session counts. Public ranking.
+ */
+export async function getLeaderboard(req, res) {
+  if (!requireDB(res)) return;
+
+  const limit = Math.min(parseInt(req.query.limit, 10) || 20, 50);
+
+  try {
+    const top = await User.find().sort({ xp: -1, updatedAt: 1 }).limit(limit).lean();
+    const ids = top.map((u) => u._id);
+
+    // Session counts for the ranked users in a single aggregation.
+    const counts = await Interview.aggregate([
+      { $match: { user: { $in: ids } } },
+      { $group: { _id: '$user', count: { $sum: 1 } } },
+    ]);
+    const countMap = Object.fromEntries(counts.map((c) => [c._id.toString(), c.count]));
+
+    const leaderboard = top.map((u, i) => ({
+      rank: i + 1,
+      id: u._id.toString(),
+      name: u.name,
+      level: u.level,
+      xp: u.xp,
+      streak: u.streak,
+      sessions: countMap[u._id.toString()] || 0,
+    }));
+
+    res.json({ leaderboard });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Failed to load leaderboard.' });
+  }
+}
+
+/**
  * GET /api/user/:id
  * Fetch a user's current profile and history (used to refresh state on load).
  */

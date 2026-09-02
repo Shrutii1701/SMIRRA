@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import InterviewSetup from './pages/InterviewSetup';
 import Interview from './pages/Interview';
 import Results from './pages/Results';
+import Leaderboard from './pages/Leaderboard';
 import Login from './pages/Login';
 
 function ProtectedRoute({ children }) {
@@ -83,13 +84,21 @@ export default function App() {
                   </ProtectedRoute>
                 } 
               />
-              <Route 
-                path="/results" 
+              <Route
+                path="/results"
                 element={
                   <ProtectedRoute>
                     <Results />
                   </ProtectedRoute>
-                } 
+                }
+              />
+              <Route
+                path="/leaderboard"
+                element={
+                  <ProtectedRoute>
+                    <Leaderboard />
+                  </ProtectedRoute>
+                }
               />
 
               {/* Catch-all */}
