@@ -1,36 +1,48 @@
 import mongoose from 'mongoose';
 
 /**
- * Establishes the shared Mongoose connection using the MONGODB_URI env variable.
- * Called once at server startup. Fails fast with a clear message if the URI is
- * missing or the initial connection cannot be established.
+ * Cached connection so that, in a serverless environment (e.g. Vercel), warm
+ * invocations reuse a single Mongo connection instead of opening a new one each
+ * time. Locally this simply connects once at startup.
  */
+let cached = global._smirraMongoose;
+if (!cached) cached = global._smirraMongoose = { conn: null, promise: null };
+
 export async function connectDB() {
   const uri = process.env.MONGODB_URI;
 
   if (!uri) {
     console.warn(
-      'WARNING: MONGODB_URI is not defined in backend/.env. ' +
-      'User accounts and interview history will not be persisted. ' +
-      'Add a MongoDB connection string to enable database features.'
+      'WARNING: MONGODB_URI is not defined. User accounts, history, and the ' +
+      'leaderboard will be unavailable until a MongoDB connection string is set.'
     );
     return null;
   }
 
-  try {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
     mongoose.set('strictQuery', true);
-    const conn = await mongoose.connect(uri);
-    console.log(`MongoDB connected: ${conn.connection.host}`);
-    return conn;
-  } catch (error) {
-    console.error(`MongoDB connection error: ${error.message}`);
-    // Do not crash the whole process: the AI endpoints can still work without DB.
-    return null;
+    cached.promise = mongoose
+      .connect(uri)
+      .then((m) => {
+        console.log(`MongoDB connected: ${m.connection.host}`);
+        return m;
+      })
+      .catch((err) => {
+        // Reset so a later invocation can retry, and don't crash the process.
+        cached.promise = null;
+        console.error(`MongoDB connection error: ${err.message}`);
+        return null;
+      });
   }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
 
 /**
- * Convenience flag other modules use to decide whether to attempt DB reads/writes.
+ * Whether a live connection is currently established.
  */
 export function isDBConnected() {
   return mongoose.connection.readyState === 1;

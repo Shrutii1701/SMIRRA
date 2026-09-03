@@ -1,31 +1,12 @@
-import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
+import app from './app.js';
 import { connectDB } from './config/db.js';
-import interviewRoutes from './routes/interviewRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 
-const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
-app.use(express.json());
-
-// Health Check Endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'SMIRRA Backend is running' });
-});
-
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/interview', interviewRoutes);
-app.use('/api/user', userRoutes);
-
-// Start the HTTP server immediately so the API is responsive even while the
-// database connection is still being established (or is unavailable).
+// Local development server. On Vercel the app is served via api/index.js instead.
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -1,4 +1,8 @@
-const API_BASE = 'http://localhost:5000/api';
+// In production (e.g. Vercel) the API is served from the same domain at /api.
+// In local dev it runs on the separate Express port. Override with VITE_API_BASE.
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  (import.meta.env.DEV ? 'http://localhost:5000/api' : '/api');
 const TOKEN_KEY = 'smirra_token';
 
 const OFFLINE_MESSAGE =
