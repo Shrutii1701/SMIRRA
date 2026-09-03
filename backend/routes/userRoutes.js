@@ -1,12 +1,14 @@
 import express from 'express';
-import { loginUser, getUser, saveSession, getLeaderboard } from '../controllers/userController.js';
+import { getMe, saveSession, getLeaderboard } from '../controllers/userController.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.post('/login', loginUser);
-// Must be registered before '/:id' so it isn't captured as an id.
+// Public ranking.
 router.get('/leaderboard', getLeaderboard);
-router.get('/:id', getUser);
-router.post('/:id/session', saveSession);
+
+// Authenticated user endpoints.
+router.get('/me', requireAuth, getMe);
+router.post('/session', requireAuth, saveSession);
 
 export default router;

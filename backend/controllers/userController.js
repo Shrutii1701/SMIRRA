@@ -7,7 +7,7 @@ import { isDBConnected } from '../config/db.js';
  * Guard used by every DB-backed handler so the API returns a clear error
  * instead of hanging when MONGODB_URI is not configured.
  */
-function requireDB(res) {
+export function requireDB(res) {
   if (!isDBConnected()) {
     res.status(503).json({
       error: 'Database is not connected. Set MONGODB_URI in backend/.env to enable accounts.',
@@ -20,7 +20,7 @@ function requireDB(res) {
 /**
  * Shape a User document for the frontend, including its session history.
  */
-async function serializeUserWithHistory(user) {
+export async function serializeUserWithHistory(user) {
   const interviews = await Interview.find({ user: user._id }).sort({ createdAt: -1 }).lean();
 
   const sessionsHistory = interviews.map((iv) => ({
@@ -51,42 +51,6 @@ async function serializeUserWithHistory(user) {
     lastPracticeDate: user.lastPracticeDate,
     sessionsHistory,
   };
-}
-
-/**
- * POST /api/user/login
- * Passwordless login: upsert the user by email and return their full profile.
- */
-export async function loginUser(req, res) {
-  if (!requireDB(res)) return;
-
-  const { name, email } = req.body;
-  if (!name || !name.trim()) {
-    return res.status(400).json({ error: 'Name is required.' });
-  }
-
-  const finalEmail = (email && email.trim()) ||
-    `${name.trim().toLowerCase().replace(/\s+/g, '')}@smirra.local`;
-
-  try {
-    let user = await User.findOne({ email: finalEmail.toLowerCase() });
-    if (!user) {
-      user = await User.create({
-        name: name.trim(),
-        email: finalEmail.toLowerCase(),
-        lastPracticeDate: new Date().toDateString(),
-      });
-    } else if (user.name !== name.trim()) {
-      // Allow updating the display name on re-login.
-      user.name = name.trim();
-      await user.save();
-    }
-
-    const profile = await serializeUserWithHistory(user);
-    res.json({ user: profile });
-  } catch (error) {
-    res.status(500).json({ error: error.message || 'Failed to log in.' });
-  }
 }
 
 /**
@@ -126,14 +90,14 @@ export async function getLeaderboard(req, res) {
 }
 
 /**
- * GET /api/user/:id
- * Fetch a user's current profile and history (used to refresh state on load).
+ * GET /api/user/me
+ * Current authenticated user's profile and history (from the JWT).
  */
-export async function getUser(req, res) {
+export async function getMe(req, res) {
   if (!requireDB(res)) return;
 
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ error: 'User not found.' });
 
     const profile = await serializeUserWithHistory(user);
@@ -144,9 +108,9 @@ export async function getUser(req, res) {
 }
 
 /**
- * POST /api/user/:id/session
- * Persist a completed interview, apply XP/level/streak progression, and return
- * the updated profile.
+ * POST /api/user/session
+ * Persist a completed interview for the authenticated user, apply
+ * XP/level/streak progression, and return the updated profile.
  */
 export async function saveSession(req, res) {
   if (!requireDB(res)) return;
@@ -159,7 +123,7 @@ export async function saveSession(req, res) {
   }
 
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ error: 'User not found.' });
 
     // Aggregate the session from its graded answers.

@@ -9,6 +9,7 @@ import Interview from './pages/Interview';
 import Results from './pages/Results';
 import Leaderboard from './pages/Leaderboard';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useUser();
@@ -50,13 +51,21 @@ export default function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Home />} />
-              <Route 
-                path="/login" 
+              <Route
+                path="/login"
                 element={
                   <PublicRoute>
                     <Login />
                   </PublicRoute>
-                } 
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <PublicRoute>
+                    <Signup />
+                  </PublicRoute>
+                }
               />
 
               {/* Protected Practice Arena Routes */}

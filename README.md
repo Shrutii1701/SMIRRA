@@ -17,7 +17,7 @@ XP, streaks, time bonuses, and a combo system.
   - **Achievements** — 14 unlockable badges across bronze/silver/gold/platinum tiers (session milestones, scores, streaks, level, and topic breadth), shown on the dashboard with progress bars and celebrated on the results screen when freshly earned.
   - **Daily challenge** — one shared topic + difficulty per calendar day, featured on the dashboard and marked complete once you finish it.
   - **Leaderboard** — global ranking of all users by total XP (with level, streak, and session counts), highlighting your own row.
-- **Protected practice arena** — lightweight local login (stored in `localStorage`) gating the dashboard, setup, interview, and results pages.
+- **Accounts & authentication** — sign up and log in with email + password (hashed with bcrypt), issued a JWT that gates the dashboard, setup, interview, results, and leaderboard pages.
 
 ## Tech Stack
 
@@ -92,6 +92,7 @@ Then edit `backend/.env`:
 PORT=5000
 GEMINI_API_KEY=your_gemini_api_key_here
 MONGODB_URI=your_mongodb_connection_string_here
+JWT_SECRET=any_long_random_string
 ```
 
 > `MONGODB_URI` enables account persistence and interview history (a free
@@ -130,10 +131,11 @@ Base URL: `http://localhost:5000/api`
 | `GET`  | `/health`               | Health check.                                                       |
 | `POST` | `/interview/question`   | Generate a question. Body: `topic`, `difficulty`, `questionType`, `previousQuestions`. |
 | `POST` | `/interview/evaluate`   | Evaluate an answer and compute bonuses. Body: `question`, `answer`, `topic`, `difficulty`, `timeTaken`, `combo`. |
-| `POST` | `/user/login`           | Passwordless login — upserts the user by email, returns profile + history. Body: `name`, `email`. |
+| `POST` | `/auth/register`        | Create an account. Body: `name`, `email`, `password`. Returns `{ token, user }`. |
+| `POST` | `/auth/login`           | Log in. Body: `email`, `password`. Returns `{ token, user }`.        |
+| `GET`  | `/user/me`              | 🔒 Current user's profile + history (Bearer token).                 |
+| `POST` | `/user/session`         | 🔒 Persist a completed interview and update XP/level/streak. Body: `topic`, `difficulty`, `gradedResponses`. |
 | `GET`  | `/user/leaderboard`     | Top users ranked by XP (query: `limit`, default 20, max 50).        |
-| `GET`  | `/user/:id`             | Fetch a user's profile and interview history.                       |
-| `POST` | `/user/:id/session`     | Persist a completed interview and update XP/level/streak. Body: `topic`, `difficulty`, `gradedResponses`. |
 
 ## Scripts
 
@@ -153,7 +155,8 @@ Base URL: `http://localhost:5000/api`
 | ---------------- | ------------- | ------------------------------------------------------- |
 | `PORT`           | `backend/.env`| Backend server port (default `5000`).                   |
 | `GEMINI_API_KEY` | `backend/.env`| Your Google Gemini API key.                             |
-| `MONGODB_URI`    | `backend/.env`| MongoDB connection string. Optional — blank = local-only storage. |
+| `MONGODB_URI`    | `backend/.env`| MongoDB connection string. Required for accounts, history, and leaderboard. |
+| `JWT_SECRET`     | `backend/.env`| Secret used to sign login tokens. Use a long random string.        |
 
 > **Note:** `backend/.env` is gitignored and must never be committed. Only `.env.example` is tracked.
 

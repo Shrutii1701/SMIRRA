@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema(
       trim: true,
       index: true,
     },
+    password: {
+      type: String,
+      required: true,
+      select: false, // never returned by default queries
+    },
     xp: {
       type: Number,
       default: 0,

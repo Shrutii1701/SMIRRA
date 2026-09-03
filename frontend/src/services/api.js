@@ -1,23 +1,44 @@
 const API_BASE = 'http://localhost:5000/api';
+const TOKEN_KEY = 'smirra_token';
 
 const OFFLINE_MESSAGE =
   'Cannot reach the SMIRRA server. Make sure the backend is running (run "npm run dev" in the backend folder), then try again.';
 
+// --- Token helpers (JWT stored in localStorage) ---
+export function getToken() {
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+export function setToken(token) {
+  try {
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+    else localStorage.removeItem(TOKEN_KEY);
+  } catch {
+    /* ignore storage errors */
+  }
+}
+
 /**
- * Shared fetch wrapper. Converts a dropped connection (backend not running)
- * into a clear, actionable message instead of the browser's raw "Failed to
- * fetch", and surfaces the server's error text for non-2xx responses.
+ * Shared fetch wrapper. Attaches the auth token when present, converts a dropped
+ * connection into a clear message, and surfaces server error text.
  */
 async function request(path, { method = 'GET', body, fallbackError } = {}) {
+  const headers = {};
+  if (body) headers['Content-Type'] = 'application/json';
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
   let response;
   try {
     response = await fetch(`${API_BASE}${path}`, {
       method,
-      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      headers,
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch {
-    // Network-level failure (server down, connection refused, CORS, offline).
     throw new Error(OFFLINE_MESSAGE);
   }
 
@@ -29,29 +50,46 @@ async function request(path, { method = 'GET', body, fallbackError } = {}) {
   return response.json();
 }
 
+// --- Auth ---
+
 /**
- * Passwordless login: upserts the user by email on the backend and returns
- * their full profile (including persisted session history).
+ * Register a new account. Stores the returned token and returns the profile.
  */
-export async function loginUser(name, email) {
-  const data = await request('/user/login', {
+export async function register(name, email, password) {
+  const data = await request('/auth/register', {
     method: 'POST',
-    body: { name, email },
+    body: { name, email, password },
+    fallbackError: 'Failed to create account.',
+  });
+  setToken(data.token);
+  return data.user;
+}
+
+/**
+ * Log in with email + password. Stores the returned token and returns the profile.
+ */
+export async function login(email, password) {
+  const data = await request('/auth/login', {
+    method: 'POST',
+    body: { email, password },
     fallbackError: 'Failed to log in.',
   });
+  setToken(data.token);
   return data.user;
 }
 
 /**
- * Fetch a user's current profile + history by id (used to sync on app load).
+ * Fetch the current authenticated user's profile + history.
  */
-export async function fetchUser(id) {
-  const data = await request(`/user/${id}`, { fallbackError: 'Failed to load user.' });
+export async function fetchMe() {
+  const data = await request('/user/me', { fallbackError: 'Failed to load profile.' });
   return data.user;
 }
 
+// --- App data ---
+
 /**
- * Fetch the XP leaderboard (top users by experience).
+ * Fetch the XP leaderboard (top users by experience). Public.
  */
 export async function fetchLeaderboard(limit = 20) {
   const data = await request(`/user/leaderboard?limit=${limit}`, {
@@ -61,11 +99,11 @@ export async function fetchLeaderboard(limit = 20) {
 }
 
 /**
- * Persist a completed interview session and receive the updated profile
- * (with recomputed XP, level, and streak) back from the backend.
+ * Persist a completed interview session for the authenticated user and receive
+ * the updated profile (with recomputed XP, level, streak).
  */
-export async function saveSession(userId, { topic, difficulty, gradedResponses }) {
-  return request(`/user/${userId}/session`, {
+export async function saveSession({ topic, difficulty, gradedResponses }) {
+  return request('/user/session', {
     method: 'POST',
     body: { topic, difficulty, gradedResponses },
     fallbackError: 'Failed to save session.',
