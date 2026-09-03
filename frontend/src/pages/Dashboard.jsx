@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { Award, Calendar, ChevronRight, Flame, BarChart3, Clock, BookOpen, User } from 'lucide-react';
+import { Award, Calendar, Flame, BarChart3, Clock, BookOpen } from 'lucide-react';
 import AchievementsPanel from '../components/AchievementsPanel';
 import DailyChallengeCard from '../components/DailyChallengeCard';
 

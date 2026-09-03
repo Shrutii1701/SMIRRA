@@ -16,7 +16,7 @@ async function request(path, { method = 'GET', body, fallbackError } = {}) {
       headers: body ? { 'Content-Type': 'application/json' } : undefined,
       body: body ? JSON.stringify(body) : undefined,
     });
-  } catch (err) {
+  } catch {
     // Network-level failure (server down, connection refused, CORS, offline).
     throw new Error(OFFLINE_MESSAGE);
   }

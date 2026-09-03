@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { Award, ShieldAlert, CheckCircle, ChevronDown, BookOpen, LayoutDashboard, Sparkles, Clock, Zap, Trophy } from 'lucide-react';
+import { Award, ShieldAlert, CheckCircle, BookOpen, LayoutDashboard, Sparkles, Clock, Zap, Trophy } from 'lucide-react';
 import { ACHIEVEMENTS, unlockedIds } from '../data/achievements';
 
 const SEEN_KEY = 'smirra_seen_achievements';
@@ -24,7 +24,7 @@ export default function Results() {
     let seen = [];
     try {
       seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '[]');
-    } catch (e) {
+    } catch {
       seen = [];
     }
     const fresh = current.filter((id) => !seen.includes(id));

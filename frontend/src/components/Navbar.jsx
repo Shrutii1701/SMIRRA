@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { LayoutDashboard, Play, LogOut, Award, Flame, User, Trophy } from 'lucide-react';
+import { LayoutDashboard, Play, LogOut, Award, Flame, Trophy } from 'lucide-react';
 
 export default function Navbar() {
   const location = useLocation();

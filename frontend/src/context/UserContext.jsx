@@ -28,7 +28,7 @@ export function UserProvider({ children }) {
       try {
         cached = JSON.parse(stored);
         setUser(cached);
-      } catch (e) {
+      } catch {
         localStorage.removeItem(STORAGE_KEY);
       }
     }
@@ -38,7 +38,7 @@ export function UserProvider({ children }) {
         try {
           const fresh = await fetchUser(cached.id);
           saveUser(fresh);
-        } catch (e) {
+        } catch {
           // Backend unreachable — keep showing the cached profile.
         }
       }
@@ -56,7 +56,7 @@ export function UserProvider({ children }) {
       const profile = await loginUser(name, email);
       saveUser(profile);
       return profile;
-    } catch (e) {
+    } catch {
       // Local fallback (no persistence beyond this browser).
       const finalEmail = email?.trim() || `${name.trim().toLowerCase().replace(/\s+/g, '')}@smirra.local`;
       const localUser = {
@@ -92,7 +92,7 @@ export function UserProvider({ children }) {
         const { user: updated } = await saveSessionApi(user.id, { topic, difficulty, gradedResponses });
         saveUser(updated);
         return;
-      } catch (e) {
+      } catch {
         // Fall through to local computation if the save fails.
       }
     }

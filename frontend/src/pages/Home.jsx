@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Sparkles, Award, Zap, Shield, Cpu } from 'lucide-react';
+import { Play, Sparkles, Award, Zap, Cpu } from 'lucide-react';
 
 export default function Home() {
   return (

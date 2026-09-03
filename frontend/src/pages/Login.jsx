@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { Terminal, User, Mail, ArrowRight } from 'lucide-react';
+import { User, Mail, ArrowRight } from 'lucide-react';
 
 export default function Login() {
   const { login } = useUser();
