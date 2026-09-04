@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import interviewRoutes from './routes/interviewRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import { connectDB } from './config/db.js';
+import { connectDB, isDBConnected } from './config/db.js';
 
 dotenv.config();
 
@@ -22,10 +22,14 @@ app.use(express.json());
 // instance it awaits the initial connect so DB-backed routes never see a
 // not-yet-connected state.
 app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-  } catch {
-    /* routes still return a clear 503 via their own requireDB guard */
+  // Retry a few times so a cold serverless instance whose first connect attempt
+  // hiccups still establishes the connection before the route runs.
+  for (let attempt = 0; attempt < 3 && !isDBConnected(); attempt++) {
+    try {
+      await connectDB();
+    } catch {
+      /* routes still return a clear 503 via their own requireDB guard */
+    }
   }
   next();
 });
