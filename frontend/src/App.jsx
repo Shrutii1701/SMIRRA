@@ -37,7 +37,7 @@ function PublicRoute({ children }) {
     );
   }
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/setup" replace />;
   }
   return children;
 }

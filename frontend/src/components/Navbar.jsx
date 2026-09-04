@@ -21,8 +21,8 @@ export default function Navbar() {
   }, []);
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/setup', label: 'Practice', icon: Play },
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/leaderboard', label: 'Ranks', icon: Trophy },
   ];
 

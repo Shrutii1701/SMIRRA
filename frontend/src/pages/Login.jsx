@@ -22,7 +22,7 @@ export default function Login() {
     setError('');
     try {
       await login(email.trim(), password);
-      navigate('/dashboard');
+      navigate('/setup');
     } catch (err) {
       setError(err.message || 'Failed to log in.');
       setSubmitting(false);

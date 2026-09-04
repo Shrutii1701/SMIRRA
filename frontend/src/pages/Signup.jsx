@@ -24,7 +24,7 @@ export default function Signup() {
     setError('');
     try {
       await register(name.trim(), email.trim(), password);
-      navigate('/dashboard');
+      navigate('/setup');
     } catch (err) {
       setError(err.message || 'Failed to create account.');
       setSubmitting(false);
