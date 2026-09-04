@@ -8,6 +8,7 @@ import InterviewSetup from './pages/InterviewSetup';
 import Interview from './pages/Interview';
 import Results from './pages/Results';
 import Leaderboard from './pages/Leaderboard';
+import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 
@@ -128,6 +129,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Leaderboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
                   </ProtectedRoute>
                 }
               />

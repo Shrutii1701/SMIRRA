@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { LayoutDashboard, Play, LogOut, Award, Flame, Trophy, Sparkle } from 'lucide-react';
+import { LayoutDashboard, Play, LogOut, Award, Flame, Trophy, Sparkle, UserRound } from 'lucide-react';
 
 export default function Navbar() {
   const location = useLocation();
@@ -117,6 +117,13 @@ export default function Navbar() {
                     <span className="font-bold text-brand-cyan">{user.xp} XP</span>
                   </div>
                 </div>
+                <Link
+                  to="/profile"
+                  onClick={() => setDropdownOpen(false)}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 mb-2 rounded-xl text-xs font-semibold text-slate-200 hover:text-brand-cyan bg-white/5 hover:bg-brand-cyan/10 border border-dark-border/40 hover:border-brand-cyan/25 transition-all"
+                >
+                  <UserRound className="h-4 w-4" /> View Profile & Analytics
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-brand-rose hover:bg-brand-rose/10 border border-transparent hover:border-brand-rose/25 transition-all"

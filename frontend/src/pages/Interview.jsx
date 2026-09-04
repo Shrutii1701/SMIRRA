@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchQuestion, submitAnswer } from '../services/api';
 import { AlertCircle, Clock, Zap, ArrowRight, Loader2, Sparkles, TrendingUp, TrendingDown } from 'lucide-react';
 import { getPersona } from '../data/personas';
+import MediaPanel from '../components/MediaPanel';
 
 const TOTAL_QUESTIONS = 5;
 
@@ -266,6 +267,9 @@ export default function Interview() {
             style={{ width: `${((currentIdx + (isLoadingQuestion ? 0 : 0.5)) / TOTAL_QUESTIONS) * 100}%` }}
           ></div>
         </div>
+
+        {/* Camera + mic studio */}
+        <MediaPanel onTranscript={(text) => setAnswer((a) => (a && !a.endsWith(' ') ? a + ' ' : a) + text)} />
 
         {/* Adaptive difficulty notice */}
         {difficultyNotice && !isLoadingQuestion && (
