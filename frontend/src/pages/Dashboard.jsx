@@ -106,7 +106,7 @@ export default function Dashboard() {
                         !hasPracticed
                           ? 'bg-slate-800'
                           : displayScore >= 80 
-                          ? 'bg-gradient-to-r from-brand-cyan to-indigo-500' 
+                          ? 'bg-gradient-to-r from-brand-cyan to-brand-primary'
                           : displayScore >= 60 
                           ? 'bg-gradient-to-r from-brand-primary to-brand-secondary' 
                           : 'bg-gradient-to-r from-brand-rose to-red-400'

@@ -7,17 +7,32 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Neutralize the default slate scale so all existing slate-* text and
+        // surfaces lose their blue tint and read as monochrome grays.
+        slate: {
+          50: "#fafafa",
+          100: "#f5f5f5",
+          200: "#e5e5e5",
+          300: "#d4d4d4",
+          400: "#a3a3a3",
+          500: "#737373",
+          600: "#525252",
+          700: "#404040",
+          800: "#262626",
+          900: "#141414",
+          950: "#0a0a0a",
+        },
         dark: {
-          bg: "#05070f",
-          card: "#0d1127",
-          border: "#1e295d",
-          accent: "#22c55e",
+          bg: "#050505",      // near-black ground
+          card: "#101010",    // dark monochrome surface
+          border: "#2a2a2a",  // neutral gray border
+          accent: "#6bff81",  // signature mint-green
         },
         brand: {
-          primary: "#6366f1", // Indigo
-          secondary: "#a855f7", // Purple
-          cyan: "#06b6d4", // Cyan
-          rose: "#f43f5e", // Rose
+          primary: "#39e070",   // green
+          secondary: "#24b957", // deeper green
+          cyan: "#6bff81",      // signature mint (main accent)
+          rose: "#ff5c6a",      // semantic red (errors / hard / low scores)
         }
       },
       fontFamily: {
@@ -31,8 +46,8 @@ export default {
       },
       keyframes: {
         glow: {
-          '0%': { boxShadow: '0 0 20px 0px rgba(99, 102, 241, 0.15)' },
-          '100%': { boxShadow: '0 0 40px 10px rgba(6, 182, 212, 0.3)' },
+          '0%': { boxShadow: '0 0 20px 0px rgba(107, 255, 129, 0.12)' },
+          '100%': { boxShadow: '0 0 40px 10px rgba(107, 255, 129, 0.28)' },
         },
         fadeIn: {
           '0%': { opacity: '0' },
@@ -44,10 +59,9 @@ export default {
         }
       },
       backgroundImage: {
-        'grid-pattern': "radial-gradient(circle, rgba(99, 102, 241, 0.1) 1px, transparent 1px)",
+        'grid-pattern': "radial-gradient(circle, rgba(107, 255, 129, 0.08) 1px, transparent 1px)",
       }
     },
   },
   plugins: [],
 }
-

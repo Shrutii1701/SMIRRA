@@ -245,7 +245,7 @@ export default function Interview() {
           <div className="flex items-center gap-4">
             {/* Combo Status */}
             {combo > 0 && (
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl border border-orange-500/20 bg-orange-500/5 text-orange-500 text-xs font-bold">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl border border-brand-cyan/25 bg-brand-cyan/5 text-brand-cyan text-xs font-bold">
                 <Zap className="h-3.5 w-3.5 fill-current" />
                 <span>{combo}x Combo</span>
               </div>

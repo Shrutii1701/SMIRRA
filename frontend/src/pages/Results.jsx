@@ -68,11 +68,11 @@ export default function Results() {
   const xpGained = avgOverall + totalTimeBonus + totalComboBonus;
 
   const dimensionStats = [
-    { label: 'Technical Accuracy', score: avgAccuracy, color: 'from-brand-primary to-indigo-600' },
-    { label: 'Completeness', score: avgCompleteness, color: 'from-brand-secondary to-purple-600' },
-    { label: 'Clarity & Logic', score: avgClarity, color: 'from-brand-cyan to-blue-500' },
-    { label: 'Relevance', score: avgRelevance, color: 'from-teal-400 to-emerald-500' },
-    { label: 'Communication Style', score: avgComm, color: 'from-orange-400 to-amber-500' },
+    { label: 'Technical Accuracy', score: avgAccuracy, color: 'from-brand-secondary to-brand-primary' },
+    { label: 'Completeness', score: avgCompleteness, color: 'from-brand-primary to-brand-cyan' },
+    { label: 'Clarity & Logic', score: avgClarity, color: 'from-brand-cyan to-brand-primary' },
+    { label: 'Relevance', score: avgRelevance, color: 'from-brand-primary to-brand-secondary' },
+    { label: 'Communication Style', score: avgComm, color: 'from-brand-secondary to-brand-cyan' },
   ];
 
   return (
