@@ -20,7 +20,7 @@ export default function Dashboard() {
 
   const stats = [
     { label: 'Practice Level', value: `Lv. ${user?.level || 1}`, icon: Award, color: 'text-brand-primary bg-brand-primary/10 border-brand-primary/20' },
-    { label: 'Active Streak', value: `${user?.streak || 0} Days`, icon: Flame, color: 'text-orange-500 bg-orange-500/10 border-orange-500/20' },
+    { label: 'Active Streak', value: `${user?.streak || 0} Days`, icon: Flame, color: 'text-brand-secondary bg-brand-secondary/10 border-brand-secondary/20' },
     { label: 'Total Experience', value: `${user?.xp || 0} XP`, icon: BarChart3, color: 'text-brand-cyan bg-brand-cyan/10 border-brand-cyan/20' },
     { label: 'Practices Done', value: `${completedCount} sessions`, icon: Clock, color: 'text-brand-secondary bg-brand-secondary/10 border-brand-secondary/20' },
   ];

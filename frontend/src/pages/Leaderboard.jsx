@@ -123,7 +123,7 @@ export default function Leaderboard() {
                       </td>
                       <td className="py-3.5 text-center hidden sm:table-cell">
                         <span className="inline-flex items-center gap-1 text-slate-300">
-                          <Flame className="h-3.5 w-3.5 text-orange-500" />
+                          <Flame className="h-3.5 w-3.5 text-brand-secondary" />
                           {r.streak}
                         </span>
                       </td>

@@ -45,7 +45,10 @@ export default function App() {
   return (
     <UserProvider>
       <Router>
-        <div className="flex flex-col min-h-screen bg-dark-bg text-slate-100">
+        <div className="relative flex flex-col min-h-screen text-slate-100">
+          {/* Animated aurora background (behind all content) */}
+          <div className="aurora-bg" aria-hidden="true"></div>
+          <div className="relative z-10 flex flex-col flex-1 min-h-screen">
           <Navbar />
           <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <Routes>
@@ -119,6 +122,7 @@ export default function App() {
           <footer className="w-full border-t border-dark-border/20 py-6 text-center text-xs text-slate-500 bg-dark-bg/40">
             <p>© {new Date().getFullYear()} SMIRRA Interview Practice Arena.</p>
           </footer>
+          </div>
         </div>
       </Router>
     </UserProvider>

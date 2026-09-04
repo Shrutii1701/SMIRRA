@@ -7,32 +7,32 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Neutralize the default slate scale so all existing slate-* text and
-        // surfaces lose their blue tint and read as monochrome grays.
+        // NYNÄ palette. Slate is remapped to a cool blue-gray scale with a warm
+        // cream top so all existing slate-* text/surfaces adopt the new theme.
         slate: {
-          50: "#fafafa",
-          100: "#f5f5f5",
-          200: "#e5e5e5",
-          300: "#d4d4d4",
-          400: "#a3a3a3",
-          500: "#737373",
-          600: "#525252",
-          700: "#404040",
-          800: "#262626",
-          900: "#141414",
-          950: "#0a0a0a",
+          50:  "#fbf7f2",
+          100: "#f6efe6", // Seashell-tinted — headings / body text
+          200: "#e7ddd0",
+          300: "#c6ccd8", // light cool gray-blue
+          400: "#98a2b4", // muted labels
+          500: "#717b92",
+          600: "#565f78",
+          700: "#3f4559",
+          800: "#2b273f",
+          900: "#211c32", // dark violet surface
+          950: "#16111f", // near-ground
         },
         dark: {
-          bg: "#050505",      // near-black ground
-          card: "#101010",    // dark monochrome surface
-          border: "#2a2a2a",  // neutral gray border
-          accent: "#6bff81",  // signature mint-green
+          bg: "#141020",      // deep violet-navy ground
+          card: "#211b31",    // dark violet surface
+          border: "#3a3352",  // muted violet border
+          accent: "#a6bcc9",  // Powder Blue
         },
         brand: {
-          primary: "#39e070",   // green
-          secondary: "#24b957", // deeper green
-          cyan: "#6bff81",      // signature mint (main accent)
-          rose: "#ff5c6a",      // semantic red (errors / hard / low scores)
+          primary: "#3e4b8e",   // French Blue — fills / gradients
+          secondary: "#f6e0b6", // Wheat — warm accent
+          cyan: "#a6bcc9",      // Powder Blue — main bright accent
+          rose: "#e0708a",      // harmonized alert rose
         }
       },
       fontFamily: {
@@ -46,8 +46,8 @@ export default {
       },
       keyframes: {
         glow: {
-          '0%': { boxShadow: '0 0 20px 0px rgba(107, 255, 129, 0.12)' },
-          '100%': { boxShadow: '0 0 40px 10px rgba(107, 255, 129, 0.28)' },
+          '0%': { boxShadow: '0 0 20px 0px rgba(62, 75, 142, 0.18)' },
+          '100%': { boxShadow: '0 0 40px 10px rgba(166, 188, 201, 0.28)' },
         },
         fadeIn: {
           '0%': { opacity: '0' },
@@ -59,7 +59,7 @@ export default {
         }
       },
       backgroundImage: {
-        'grid-pattern': "radial-gradient(circle, rgba(107, 255, 129, 0.08) 1px, transparent 1px)",
+        'grid-pattern': "radial-gradient(circle, rgba(166, 188, 201, 0.08) 1px, transparent 1px)",
       }
     },
   },

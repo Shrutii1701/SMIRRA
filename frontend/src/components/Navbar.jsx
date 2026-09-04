@@ -112,10 +112,10 @@ export default function Navbar() {
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-400 flex items-center gap-1">
-                        <Flame className="h-3.5 w-3.5 text-orange-500" />
+                        <Flame className="h-3.5 w-3.5 text-brand-secondary" />
                         Practice Streak
                       </span>
-                      <span className="font-bold text-orange-500">{user.streak} Days</span>
+                      <span className="font-bold text-brand-secondary">{user.streak} Days</span>
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-400 flex items-center gap-1">

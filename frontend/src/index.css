@@ -7,10 +7,6 @@
 @layer base {
   body {
     @apply bg-dark-bg text-slate-100 font-sans min-h-screen overflow-x-hidden;
-    background-image:
-      radial-gradient(circle at 50% 0%, rgba(107, 255, 129, 0.06) 0%, transparent 45%),
-      radial-gradient(circle at 90% 80%, rgba(107, 255, 129, 0.03) 0%, transparent 40%),
-      radial-gradient(circle at 10% 60%, rgba(107, 255, 129, 0.02) 0%, transparent 50%);
   }
 
   /* Custom Scrollbar */
@@ -29,21 +25,21 @@
   .glass-card {
     @apply bg-dark-card/65 backdrop-blur-md border border-dark-border/40 rounded-2xl shadow-xl transition-all duration-300;
   }
-  
+
   .glass-card-hover {
     @apply hover:border-brand-primary/50 hover:shadow-brand-primary/10 hover:shadow-2xl hover:-translate-y-1;
   }
 
   .glow-text-cyan {
-    text-shadow: 0 0 10px rgba(107, 255, 129, 0.5);
+    text-shadow: 0 0 12px rgba(166, 188, 201, 0.5);
   }
 
   .glow-text-indigo {
-    text-shadow: 0 0 10px rgba(107, 255, 129, 0.5);
+    text-shadow: 0 0 12px rgba(62, 75, 142, 0.55);
   }
 
   .btn-gradient {
-    @apply bg-gradient-to-r from-brand-cyan to-brand-primary text-dark-bg font-semibold py-3 px-6 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-brand-primary/25 hover:shadow-brand-cyan/40;
+    @apply bg-gradient-to-r from-brand-primary to-[#5a4b9c] text-slate-100 font-semibold py-3 px-6 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-brand-primary/30 hover:shadow-brand-cyan/30;
   }
 
   .btn-outline {
@@ -57,4 +53,54 @@
 
 .text-gradient-rainbow {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-cyan;
+}
+
+/* ── Animated aurora background ─────────────────────────────────────────── */
+/* Sits behind all app content (see App.jsx). Slowly drifting, blurred blobs
+   in the NYNÄ palette, echoing the dreamy gradient of the reference. */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(62, 75, 142, 0.22), transparent 60%),
+    radial-gradient(90% 70% at 100% 110%, rgba(61, 21, 52, 0.35), transparent 60%);
+}
+.aurora-bg::before,
+.aurora-bg::after {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  background-repeat: no-repeat;
+  will-change: transform;
+}
+.aurora-bg::before {
+  background:
+    radial-gradient(38% 38% at 22% 30%, rgba(62, 75, 142, 0.55), transparent 62%),
+    radial-gradient(32% 32% at 80% 24%, rgba(166, 188, 201, 0.30), transparent 62%),
+    radial-gradient(40% 40% at 68% 80%, rgba(61, 21, 52, 0.55), transparent 64%);
+  filter: blur(80px);
+  animation: auroraDrift 28s ease-in-out infinite alternate;
+}
+.aurora-bg::after {
+  background:
+    radial-gradient(30% 30% at 32% 72%, rgba(246, 224, 182, 0.18), transparent 60%),
+    radial-gradient(28% 28% at 60% 38%, rgba(122, 92, 150, 0.34), transparent 62%),
+    radial-gradient(26% 26% at 85% 65%, rgba(166, 188, 201, 0.20), transparent 60%);
+  filter: blur(90px);
+  animation: auroraDrift2 36s ease-in-out infinite alternate;
+}
+@keyframes auroraDrift {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  100% { transform: translate3d(4%, -3%, 0) rotate(9deg) scale(1.18); }
+}
+@keyframes auroraDrift2 {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.06); }
+  100% { transform: translate3d(-5%, 4%, 0) rotate(-7deg) scale(1.2); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora-bg::before,
+  .aurora-bg::after { animation: none; }
 }

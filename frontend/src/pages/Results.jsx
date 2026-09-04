@@ -102,7 +102,7 @@ export default function Results() {
           <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-1">XP Points Gained</span>
           <div className="flex gap-3 text-[10px] text-slate-500 mt-3 border-t border-dark-border/20 pt-2 w-full justify-center">
             <span className="flex items-center gap-0.5"><Clock className="h-3 w-3 text-brand-cyan" /> +{totalTimeBonus} time</span>
-            <span className="flex items-center gap-0.5"><Zap className="h-3 w-3 text-orange-500" /> +{totalComboBonus} combo</span>
+            <span className="flex items-center gap-0.5"><Zap className="h-3 w-3 text-brand-cyan" /> +{totalComboBonus} combo</span>
           </div>
         </div>
       </div>
