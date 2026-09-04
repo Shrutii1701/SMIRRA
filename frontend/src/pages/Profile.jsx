@@ -136,14 +136,14 @@ export default function Profile() {
                 <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-36" preserveAspectRatio="none">
                   <defs>
                     <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#a6bcc9" stopOpacity="0.35" />
-                      <stop offset="100%" stopColor="#a6bcc9" stopOpacity="0" />
+                      <stop offset="0%" style={{ stopColor: 'rgb(var(--c-brand-cyan))' }} stopOpacity="0.35" />
+                      <stop offset="100%" style={{ stopColor: 'rgb(var(--c-brand-cyan))' }} stopOpacity="0" />
                     </linearGradient>
                   </defs>
                   <path d={trendPath.area} fill="url(#trendFill)" />
-                  <path d={trendPath.line} fill="none" stroke="#a6bcc9" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+                  <path d={trendPath.line} fill="none" style={{ stroke: 'rgb(var(--c-brand-cyan))' }} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
                   {trendPath.pts.map((p, i) => (
-                    <circle key={i} cx={p[0]} cy={p[1]} r="3" fill="#141020" stroke="#a6bcc9" strokeWidth="2" />
+                    <circle key={i} cx={p[0]} cy={p[1]} r="3" style={{ fill: 'rgb(var(--c-dark-bg))', stroke: 'rgb(var(--c-brand-cyan))' }} strokeWidth="2" />
                   ))}
                 </svg>
               ) : (

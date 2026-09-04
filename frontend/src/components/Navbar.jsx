@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { LayoutDashboard, Play, LogOut, Award, Flame, Trophy, Sparkle, UserRound } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
   const location = useLocation();
@@ -77,7 +78,9 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* Right — profile / CTA */}
+        {/* Right — theme toggle + profile / CTA */}
+        <div className="flex items-center gap-2">
+        <ThemeToggle />
         {user ? (
           <div className="relative" ref={dropdownRef}>
             <button
@@ -138,6 +141,7 @@ export default function Navbar() {
             Get Started
           </Link>
         )}
+        </div>
       </div>
     </nav>
   );

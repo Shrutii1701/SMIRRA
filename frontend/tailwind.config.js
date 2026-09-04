@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const c = (v) => `rgb(var(${v}) / <alpha-value>)`;
+
 export default {
   content: [
     "./index.html",
@@ -7,32 +9,32 @@ export default {
   theme: {
     extend: {
       colors: {
-        // NYNÄ palette. Slate is remapped to a cool blue-gray scale with a warm
-        // cream top so all existing slate-* text/surfaces adopt the new theme.
+        // All colors are driven by CSS variables so themes can swap at runtime
+        // (see index.css :root and [data-theme="mocha"]).
         slate: {
-          50:  "#fbf7f2",
-          100: "#f6efe6", // Seashell-tinted — headings / body text
-          200: "#e7ddd0",
-          300: "#c6ccd8", // light cool gray-blue
-          400: "#98a2b4", // muted labels
-          500: "#717b92",
-          600: "#565f78",
-          700: "#3f4559",
-          800: "#2b273f",
-          900: "#211c32", // dark violet surface
-          950: "#16111f", // near-ground
+          50: c('--c-slate-50'),
+          100: c('--c-slate-100'),
+          200: c('--c-slate-200'),
+          300: c('--c-slate-300'),
+          400: c('--c-slate-400'),
+          500: c('--c-slate-500'),
+          600: c('--c-slate-600'),
+          700: c('--c-slate-700'),
+          800: c('--c-slate-800'),
+          900: c('--c-slate-900'),
+          950: c('--c-slate-950'),
         },
         dark: {
-          bg: "#141020",      // deep violet-navy ground
-          card: "#211b31",    // dark violet surface
-          border: "#3a3352",  // muted violet border
-          accent: "#a6bcc9",  // Powder Blue
+          bg: c('--c-dark-bg'),
+          card: c('--c-dark-card'),
+          border: c('--c-dark-border'),
+          accent: c('--c-dark-accent'),
         },
         brand: {
-          primary: "#3e4b8e",   // French Blue — fills / gradients
-          secondary: "#f6e0b6", // Wheat — warm accent
-          cyan: "#a6bcc9",      // Powder Blue — main bright accent
-          rose: "#e0708a",      // harmonized alert rose
+          primary: c('--c-brand-primary'),
+          secondary: c('--c-brand-secondary'),
+          cyan: c('--c-brand-cyan'),
+          rose: c('--c-brand-rose'),
         }
       },
       fontFamily: {
@@ -46,8 +48,8 @@ export default {
       },
       keyframes: {
         glow: {
-          '0%': { boxShadow: '0 0 20px 0px rgba(62, 75, 142, 0.18)' },
-          '100%': { boxShadow: '0 0 40px 10px rgba(166, 188, 201, 0.28)' },
+          '0%': { boxShadow: '0 0 20px 0px rgb(var(--c-brand-primary) / 0.18)' },
+          '100%': { boxShadow: '0 0 40px 10px rgb(var(--c-brand-cyan) / 0.28)' },
         },
         fadeIn: {
           '0%': { opacity: '0' },
@@ -59,7 +61,7 @@ export default {
         }
       },
       backgroundImage: {
-        'grid-pattern': "radial-gradient(circle, rgba(166, 188, 201, 0.08) 1px, transparent 1px)",
+        'grid-pattern': "radial-gradient(circle, rgb(var(--c-dark-accent) / 0.08) 1px, transparent 1px)",
       }
     },
   },

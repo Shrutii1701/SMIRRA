@@ -4,6 +4,77 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Themes (color tokens as "R G B" channels) ──────────────────────────── */
+/* Default: NYNÄ (deep violet + blue + cream) */
+:root {
+  --c-slate-50: 251 247 242;
+  --c-slate-100: 246 239 230;
+  --c-slate-200: 231 221 208;
+  --c-slate-300: 198 204 216;
+  --c-slate-400: 152 162 180;
+  --c-slate-500: 113 123 146;
+  --c-slate-600: 86 95 120;
+  --c-slate-700: 63 69 89;
+  --c-slate-800: 43 39 63;
+  --c-slate-900: 33 28 50;
+  --c-slate-950: 22 17 31;
+
+  --c-dark-bg: 20 16 32;
+  --c-dark-card: 33 27 49;
+  --c-dark-border: 58 51 82;
+  --c-dark-accent: 166 188 201;
+
+  --c-brand-primary: 62 75 142;
+  --c-brand-secondary: 246 224 182;
+  --c-brand-cyan: 166 188 201;
+  --c-brand-rose: 224 112 138;
+
+  --c-btn-to: 90 75 156;
+  --c-btn-text: 246 239 230;
+
+  --aurora-1: 62 75 142;
+  --aurora-2: 166 188 201;
+  --aurora-3: 61 21 52;
+  --aurora-4: 246 224 182;
+  --aurora-5: 122 92 150;
+  --glow-cursor: 166 188 201;
+}
+
+/* Alternative: Mocha (Snow / Almond Cream / Taupe / Dark Coffee / Black) */
+[data-theme="mocha"] {
+  --c-slate-50: 255 251 255;
+  --c-slate-100: 244 232 217;
+  --c-slate-200: 232 218 199;
+  --c-slate-300: 206 191 176;
+  --c-slate-400: 173 156 144;
+  --c-slate-500: 146 129 122;
+  --c-slate-600: 112 98 90;
+  --c-slate-700: 82 70 62;
+  --c-slate-800: 50 39 30;
+  --c-slate-900: 36 26 19;
+  --c-slate-950: 20 13 8;
+
+  --c-dark-bg: 11 8 5;
+  --c-dark-card: 32 22 15;
+  --c-dark-border: 74 61 52;
+  --c-dark-accent: 241 218 191;
+
+  --c-brand-primary: 179 160 148;
+  --c-brand-secondary: 241 218 191;
+  --c-brand-cyan: 241 218 191;
+  --c-brand-rose: 193 95 78;
+
+  --c-btn-to: 241 218 191;
+  --c-btn-text: 26 17 10;
+
+  --aurora-1: 54 36 23;
+  --aurora-2: 146 129 122;
+  --aurora-3: 20 13 8;
+  --aurora-4: 241 218 191;
+  --aurora-5: 120 100 88;
+  --glow-cursor: 241 218 191;
+}
+
 @layer base {
   body {
     @apply bg-dark-bg text-slate-100 font-sans min-h-screen overflow-x-hidden;
@@ -31,15 +102,18 @@
   }
 
   .glow-text-cyan {
-    text-shadow: 0 0 12px rgba(166, 188, 201, 0.5);
+    text-shadow: 0 0 12px rgb(var(--c-brand-cyan) / 0.5);
   }
 
   .glow-text-indigo {
-    text-shadow: 0 0 12px rgba(62, 75, 142, 0.55);
+    text-shadow: 0 0 12px rgb(var(--c-brand-primary) / 0.55);
   }
 
   .btn-gradient {
-    @apply bg-gradient-to-r from-brand-primary to-[#5a4b9c] text-slate-100 font-semibold py-3 px-6 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-brand-primary/30 hover:shadow-brand-cyan/30;
+    @apply font-semibold py-3 px-6 rounded-xl hover:opacity-90 active:scale-95 transition-all;
+    background-image: linear-gradient(to right, rgb(var(--c-brand-primary)), rgb(var(--c-btn-to)));
+    color: rgb(var(--c-btn-text));
+    box-shadow: 0 10px 20px -6px rgb(var(--c-brand-primary) / 0.4);
   }
 
   .btn-outline {
@@ -65,8 +139,8 @@
   pointer-events: none;
   overflow: hidden;
   background:
-    radial-gradient(120% 90% at 50% -10%, rgba(62, 75, 142, 0.22), transparent 60%),
-    radial-gradient(90% 70% at 100% 110%, rgba(61, 21, 52, 0.35), transparent 60%);
+    radial-gradient(120% 90% at 50% -10%, rgb(var(--aurora-1) / 0.22), transparent 60%),
+    radial-gradient(90% 70% at 100% 110%, rgb(var(--aurora-3) / 0.35), transparent 60%);
 }
 .aurora-bg::before,
 .aurora-bg::after {
@@ -78,17 +152,17 @@
 }
 .aurora-bg::before {
   background:
-    radial-gradient(38% 38% at 22% 30%, rgba(62, 75, 142, 0.55), transparent 62%),
-    radial-gradient(32% 32% at 80% 24%, rgba(166, 188, 201, 0.30), transparent 62%),
-    radial-gradient(40% 40% at 68% 80%, rgba(61, 21, 52, 0.55), transparent 64%);
+    radial-gradient(38% 38% at 22% 30%, rgb(var(--aurora-1) / 0.55), transparent 62%),
+    radial-gradient(32% 32% at 80% 24%, rgb(var(--aurora-2) / 0.30), transparent 62%),
+    radial-gradient(40% 40% at 68% 80%, rgb(var(--aurora-3) / 0.55), transparent 64%);
   filter: blur(80px);
   animation: auroraDrift 28s ease-in-out infinite alternate;
 }
 .aurora-bg::after {
   background:
-    radial-gradient(30% 30% at 32% 72%, rgba(246, 224, 182, 0.18), transparent 60%),
-    radial-gradient(28% 28% at 60% 38%, rgba(122, 92, 150, 0.34), transparent 62%),
-    radial-gradient(26% 26% at 85% 65%, rgba(166, 188, 201, 0.20), transparent 60%);
+    radial-gradient(30% 30% at 32% 72%, rgb(var(--aurora-4) / 0.18), transparent 60%),
+    radial-gradient(28% 28% at 60% 38%, rgb(var(--aurora-5) / 0.34), transparent 62%),
+    radial-gradient(26% 26% at 85% 65%, rgb(var(--aurora-2) / 0.20), transparent 60%);
   filter: blur(90px);
   animation: auroraDrift2 36s ease-in-out infinite alternate;
 }
@@ -117,7 +191,7 @@
   border-radius: 9999px;
   pointer-events: none;
   z-index: 1;
-  background: radial-gradient(circle, rgba(166, 188, 201, 0.16), rgba(62, 75, 142, 0.08) 42%, transparent 72%);
+  background: radial-gradient(circle, rgb(var(--glow-cursor) / 0.16), rgb(var(--c-brand-primary) / 0.08) 42%, transparent 72%);
   transform: translate3d(var(--mx, 50vw), var(--my, 50vh), 0);
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   filter: blur(12px);
