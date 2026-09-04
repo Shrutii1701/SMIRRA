@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { UserProvider, useUser } from './context/UserContext';
 import Navbar from './components/Navbar';
@@ -42,12 +42,31 @@ function PublicRoute({ children }) {
 }
 
 export default function App() {
+  // Track the cursor to drive a soft glow that trails the pointer across the bg.
+  useEffect(() => {
+    let raf = 0;
+    const onMove = (e) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty('--mx', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--my', `${e.clientY}px`);
+      });
+    };
+    window.addEventListener('pointermove', onMove);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <UserProvider>
       <Router>
         <div className="relative flex flex-col min-h-screen text-slate-100">
           {/* Animated aurora background (behind all content) */}
           <div className="aurora-bg" aria-hidden="true"></div>
+          {/* Soft glow that follows the cursor */}
+          <div className="cursor-glow" aria-hidden="true"></div>
           <div className="relative z-10 flex flex-col flex-1 min-h-screen">
           <Navbar />
           <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

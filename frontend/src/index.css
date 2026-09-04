@@ -104,3 +104,28 @@
   .aurora-bg::before,
   .aurora-bg::after { animation: none; }
 }
+
+/* ── Cursor-following glow ──────────────────────────────────────────────── */
+/* A soft blob that trails the pointer; --mx/--my are set on <html> from JS. */
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 640px;
+  height: 640px;
+  margin: -320px 0 0 -320px; /* center the blob on the pointer */
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(circle, rgba(166, 188, 201, 0.16), rgba(62, 75, 142, 0.08) 42%, transparent 72%);
+  transform: translate3d(var(--mx, 50vw), var(--my, 50vh), 0);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: blur(12px);
+  mix-blend-mode: screen;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor-glow { display: none; }
+}
+@media (hover: none) {
+  .cursor-glow { display: none; } /* skip on touch devices */
+}
