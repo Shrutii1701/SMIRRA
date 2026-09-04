@@ -25,33 +25,53 @@ export function setToken(token) {
   }
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 /**
- * Shared fetch wrapper. Attaches the auth token when present, converts a dropped
- * connection into a clear message, and surfaces server error text.
+ * Shared fetch wrapper. Attaches the auth token, converts a dropped connection
+ * into a clear message, and surfaces server error text. Transparently retries
+ * transient failures — a cold serverless instance whose database connection is
+ * still waking (503) or a momentary network blip — so pages don't surface a
+ * cold-start error the user would otherwise just refresh past. Retries are safe:
+ * a 503 is rejected before any write happens, and a network error means the
+ * request never completed.
  */
-async function request(path, { method = 'GET', body, fallbackError } = {}) {
+async function request(path, { method = 'GET', body, fallbackError, retries = 3 } = {}) {
   const headers = {};
   if (body) headers['Content-Type'] = 'application/json';
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  let response;
-  try {
-    response = await fetch(`${API_BASE}${path}`, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    });
-  } catch {
-    throw new Error(OFFLINE_MESSAGE);
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    let response;
+    try {
+      response = await fetch(`${API_BASE}${path}`, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } catch {
+      lastError = new Error(OFFLINE_MESSAGE);
+      if (attempt < retries) { await sleep(500 * (attempt + 1)); continue; }
+      throw lastError;
+    }
+
+    // Cold-start: the DB is still connecting on this instance. Wait and retry.
+    if (response.status === 503 && attempt < retries) {
+      await sleep(600 * (attempt + 1));
+      continue;
+    }
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error || fallbackError || 'Request failed.');
+    }
+
+    return response.json();
   }
 
-  if (!response.ok) {
-    const errData = await response.json().catch(() => ({}));
-    throw new Error(errData.error || fallbackError || 'Request failed.');
-  }
-
-  return response.json();
+  throw lastError || new Error(fallbackError || 'Request failed.');
 }
 
 // --- Auth ---
